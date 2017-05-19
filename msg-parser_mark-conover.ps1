@@ -76,6 +76,6 @@ function Expand-MsgAttachment
 }
 
 #Get-ChildItem -Recurse | Expand-MsgAttachment
-$PathForMsgFiles = "C:\Users\Mal\Desktop\DELETE_FILES\MCD-2017-01713_possible-malicious-google-docs-emails"
+$PathForMsgFiles = "C:\Users\Mal\Desktop\DELETE_FILES"
 $DirAttachmentFiles = $PathForMsgFiles + "\msg-attachment-files"
 Expand-MsgAttachment -Path $PathForMsgFiles #-LiteralPath $DirAttachmentFiles
