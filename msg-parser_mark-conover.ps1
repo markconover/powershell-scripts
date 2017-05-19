@@ -1,3 +1,6 @@
+# This script was taken from the following url and modified:
+# https://chris.dziemborowicz.com/blog/2013/05/18/how-to-batch-extract-attachments-from-msg-files-using-powershell/
+
 function Expand-MsgAttachment
 {
     [CmdletBinding()]
