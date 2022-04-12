@@ -31,13 +31,20 @@ Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope LocalMachine
 
 $env:PSModulePath -split ';'   
 
-Update-Help -Force -Verbose
-
-
 # ---------------------------------------------------------
 # Install PowerShell (and other packages)
 # ---------------------------------------------------------
+# References:
+#   https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.2
+#   https://docs.microsoft.com/en-us/powershell/
+#   https://docs.microsoft.com/en-us/powershell/module/powershellget/install-module?view=powershell-7.2
+#   https://docs.microsoft.com/en-us/powershell/scripting/samples/working-with-software-installations?view=powershell-7.2#listing-windows-installer-applications
+#   https://github.com/PowerShell/PowerShellGet
+#   https://www.powershellgallery.com/
+#   https://docs.microsoft.com/en-us/learn/browse/?terms=PowerShell
 # Set-ExecutionPolicy Unrestricted
+# Update-Help -Force -Verbose
+# notepad++ (Get-PSReadLineOption | select -ExpandProperty HistorySavePath)
 # 
 # Install - Chocolatey ("choco")
 # Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
@@ -140,6 +147,7 @@ Update-Help -Force -Verbose
 # "Commands" - PowerShell Commands
 
 # Computer Info - PowerShell Commands
+# Get-ComputerInfo -Property "*version"
 # Write-Host $env:COMPUTERNAME
 # Get-CimClass -ClassName *bios*
 # Get-CimClass -ClassName Win32_Bios
