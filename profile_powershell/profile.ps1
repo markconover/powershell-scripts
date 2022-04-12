@@ -33,11 +33,111 @@ $env:PSModulePath -split ';'
 
 Update-Help -Force -Verbose
 
+
+# ---------------------------------------------------------
+# Install PowerShell (and other packages)
+# ---------------------------------------------------------
+# Set-ExecutionPolicy Unrestricted
+# 
+# Install - Chocolatey ("choco")
+# Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+# choco install advanced-ip-scanner -y --force
+# choco install angryip -y --force
+# choco install curl -y --force
+# choco install diff -y --force
+# choco install grep -y --force
+# choco install ip-query -y --force
+# choco install jupyter-powershell -y --force
+# choco install lansweeper -y --force
+# choco install man -y --force
+# choco install ndiff -y --force
+# choco install nmap -y --force
+# choco install oh-my-posh -y --force
+# choco install openssl -y --force
+# choco install pip -y --force
+# choco install pip_search -y --force
+# choco install poshgit -y --force
+# choco install pslist -y --force
+# choco install psreadline -y --force
+# choco install python2 -y --force
+# choco install python3 -y --force
+# choco install sysinternals -y --force
+# choco install version -y --force
+# choco install which -y --force
+# choco install zenmap -y --force
+
+# Install - "pip"
+# py -m pip install --upgrade pip --force
+# py -m pip install pip_search -v
+# py -m pip install --user pipx
+# py -m pip install requests
+# pip install *bigquery*
+# pip install google-cloud-bigquery
+# pip install google-cloud-storage
+# pip install --upgrade google-api-python-client
+# pip install --upgrade google-auth-oauthlib
+# pip install --upgrade google-cloud-bigquery
+# pip install --upgrade google-cloud-storage -v
+# pip install --upgrade setuptools
+# pip install BeautifulSoup
+# pip install SQLAlchemy
+# pip install bottle
+# pip install google-api-utils
+# pip install google-cloud
+# pip install google-drive-api
+# pip install google_documents
+# pip install google_spreadsheet
+# pip install ip-query -v
+# pip install jupyter-console
+# pip install man
+# pip install matplotlib 
+# pip install notebook
+# pip install numpy
+# pip install openpyxl
+# pip install pandas
+# pip install psreadline
+# pip install py2exe
+# pip install pyscreenshot
+# pip install pyserial
+# pip install pyusb
+# pip install pywin32
+# pip install pyxlsb
+# pip install uspp
+# pip install which
+# pip install xlsxwriter
+# pip install zenmap
+
+# "Install-Module" - PowerShell Commands
+# Install-Module -Name PowerShellGet -Force -Verbose
+# Install-Module PSReadLine -Force -Verbose
+# Install-Module PSScriptTools -Force -Verbose
+# Install-Module pester -SkipPublisherCheck -Force -Verbose
+# Install-Module -Name ActiveDirectoryTools -Force -Verbose
+# Update-Module -Verbose
+# Get-Module -ListAvailable -All
+
+# "Install-Script" - PowerShell Commands
+# Install-Script -Name CertificateScanner
+# Install-Script -Name Download-AllGalleryModules
+# Install-Script -Name Get-ComputerInfo
+# Install-Script -Name GettingTLSVersionsFromAllComputers
+# Install-Script -Name PSGalleryInfo
+# Install-Script -Name PSGalleryModule
+# Install-Script -Name set-nsssl
+
 # Get-Help * -Parameter ComputerName
 # Get-Command -ParameterName ComputerName
 
-
 # Get-PSRepository | Format-List
+
+# Modules - PowerShell Commands
+# Find-Module *install*
+# Get-Command -Name '*Process'
+
+# Scripts - PowerShell Commands
+# Find-Script *install*
+
+# "Commands" - PowerShell Commands
 
 # Computer Info - PowerShell Commands
 # Write-Host $env:COMPUTERNAME
@@ -46,9 +146,11 @@ Update-Help -Force -Verbose
 # Get-CimInstance -ClassName Win32_Bios
 # Get-CimInstance -ClassName Win32_NetworkAdapterConfiguration -Filter "DHCPEnabled = $true"
 # Get-CimInstance -Query "SELECT * FROM Win32_NetworkAdapterConfiguration WHERE DHCPEnabled = $true"
+# Get-CimInstance -ClassName Win32_Environment
+# Get-Help * -Parameter ComputerName
+# Get-Command -ParameterName ComputerName
 
-# Get-Module -ListAvailable -All
-# Get-Module -All
+# Get-Module -ListAvailable -All -Verbose
 # Get-Module -ListAvailable | where { $_.path -match "System32" }
 
 # Get-Command -Module PowerShellGet | Format-Wide -Column 3
@@ -86,3 +188,10 @@ Update-Help -Force -Verbose
 
 # Processes - PowerShell Commands
 # Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments @{CommandLine = 'calc.exe'}
+# Get-CimInstance -ClassName Win32_Process -Filter "Name='calculator.exe'"
+
+# "Cimsession" - PowerShell Commands
+# Get-Command -ParameterName Cimsession
+
+# Services - PowerShell Commands
+# Get-Service -Name BITS
