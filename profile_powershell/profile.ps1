@@ -32,6 +32,13 @@ Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope LocalMachine
 $env:PSModulePath -split ';'   
 
 # ---------------------------------------------------------
+# Help - PowerShell Commands
+# ---------------------------------------------------------
+# Get-Help * -Parameter ComputerName
+# Update-Help -Force -Verbose
+# Save-Help -DestinationPath "<DESTINATION_PATH>" -Force -Verbose
+
+# ---------------------------------------------------------
 # Install PowerShell (and other packages)
 # ---------------------------------------------------------
 # References:
@@ -133,20 +140,105 @@ $env:PSModulePath -split ';'
 # Install-Script -Name PSGalleryModule
 # Install-Script -Name set-nsssl
 
-# Get-Help * -Parameter ComputerName
-# Get-Command -ParameterName ComputerName
-
+# ---------------------------------------------------------
+# PowerShell Commands
+# ---------------------------------------------------------
 # Get-PSRepository | Format-List
 
 # Modules - PowerShell Commands
 # Find-Module *install*
+# Find-Module -Repository PSGallery
+# Find-Module -Name *pip*
+# Find-Module nx* | Format-Table Version, Name, Description
+# Find-Module nx* | Install-Module -Force
+# Find-Module -Tag 'Active Directory', 'ActiveDirectory', 'Active', 'Directory', 'AD'
 # Get-Command -Name '*Process'
+# Get-Module -ListAvailable -All -Verbose
+# Get-Module -ListAvailable | where { $_.path -match "System32" }
+# Install-Module -Name PowerShellGet -Force -Verbose
+# Install-Module PSReadLine -Force -Verbose
+# Install-Module PSScriptTools -Force -Verbose
+# Install-Module pester -SkipPublisherCheck -Force -Verbose
+# Install-Module -Name ActiveDirectoryTools -Force -Verbose
+# Update-Module -Verbose
+# Get-Module -ListAvailable -All
 
 # Scripts - PowerShell Commands
 # Find-Script *install*
+# Find-Script -Name *pip*
+# Install-Script -Name CertificateScanner
+# Install-Script -Name Download-AllGalleryModules
+# Install-Script -Name Get-ComputerInfo
+# Install-Script -Name GettingTLSVersionsFromAllComputers
+# Install-Script -Name PSGalleryInfo
+# Install-Script -Name PSGalleryModule
+# Install-Script -Name set-nsssl
 
 # "Commands" - PowerShell Commands
+# Get-Command -Module PowerShellGet | Format-Wide -Column 3
+# Get-Command -ParameterName Cimsession
+# Get-Command -ParameterName ComputerName
 
+# Sort / Filter - PowerShell Commands
+# Find-Module -Name *session* -Repository PSGallery | Sort-Object -Property Name | Format-Table -Property Name -HideTableHeaders
+# Get-Process | sort -Descending ws | select -First 3
+# $servers = Get-ADComputer -Filter * -Properties *
+# Get-CimInstance -ClassName Win32_NetworkAdapterConfiguration -Filter "DHCPEnabled = $true"
+# Get-WmiObject -Class Win32_UserAccount -Namespace "root\cimv2" -Filter "LocalAccount='$True'"
+# Get-ChildItem -Path C:\ -Filter *.sys -Force
+# Get-CimInstance -ClassName Win32_Process -Filter "Name='calculator.exe'"
+
+# Get-ChildItem hklm:\software | Get-Member ps*
+
+# ---------------------------------------------------------
+# Active Directory (AD) - PowerShell Commands
+# ---------------------------------------------------------
+# $ForestInfo = Get-ADForest -Current LocalComputer
+# $DomainInfo = Get-ADDomain -Current LocalComputer
+# Show-DomainTree
+# try {
+    # Import-Module ActiveDirectory -ErrorAction Stop
+# } catch {
+    # Write-Host "Unable to import module ActiveDirectory! Ensure it is available on this system." -BackgroundColor Yellow -ForegroundColor Black
+    # Break
+# }
+# try {
+    # Import-Module GroupPolicy -ErrorAction Stop
+# } catch {
+    # Write-Host "Unable to import module GroupPolicy! Ensure it is available on this system." -BackgroundColor Yellow -ForegroundColor Black
+    # Break
+# }
+# $ForestInfo = Get-ADForest -Current LocalComputer
+# $DomainInfo = Get-ADDomain -Current LocalComputer
+# $DCs = Get-ADDomainController -Filter {ISReadOnly -eq $True} -ErrorVariable ErrVar -ErrorAction SilentlyContinue | Select-Object $Properties
+#
+# $SearchBase = $DomainInfo.DistinguishedName
+# Add-Content -Path $LogFile -Value "Domain FQDN: $($DomainInfo.DNSRoot)"
+# Add-Content -Path $LogFile -Value "Domain NetBIOS: $($DomainInfo.NetBIOSName)"
+# Add-Content -Path $LogFile -Value "Script Reference: $($ScriptText[0].Content)"
+# Add-Content -Path $LogFile -Value "----------------------------------------------------"
+# If ($DomainInfo.DomainSID.GetType().Name -eq 'String'){
+    # $DomainSID = $DomainInfo.DomainSID
+# } Else {
+    # $DomainSID = ($DomainInfo | Select-Object -ExpandProperty DomainSID).Value
+# }
+# $ChildDomainStatus = foreach ($child in $DomainInfo.ChildDomains){
+    # If ((Test-Netconnection $child -Port 389).TcpTestSucceeded){
+        # New-Object -TypeName PSObject -Property @{
+            # DomainName = $child
+            # Online = $True
+        # }
+    # } Else {
+        # New-Object -TypeName PSObject -Property @{
+            # DomainName = $child
+            # Online = $False
+        # }
+    # }
+# }
+
+# ---------------------------------------------------------
+# Computer Info - PowerShell Commands
+# ---------------------------------------------------------
 # Computer Info - PowerShell Commands
 # Get-ADComputer -Identity "<HOSTNAME>" -Properties * -Verbose
 # $servers = Get-ADComputer -Filter * -Properties *
@@ -155,36 +247,21 @@ $env:PSModulePath -split ';'
 # Get-CimClass -ClassName *bios*
 # Get-CimClass -ClassName Win32_Bios
 # Get-CimInstance -ClassName Win32_Bios
+# Get-CimInstance -ClassName Win32_OperatingSystem
 # Get-CimInstance -ClassName Win32_NetworkAdapterConfiguration -Filter "DHCPEnabled = $true"
 # Get-CimInstance -Query "SELECT * FROM Win32_NetworkAdapterConfiguration WHERE DHCPEnabled = $true"
 # Get-CimInstance -ClassName Win32_Environment
 # Get-Help * -Parameter ComputerName
 # Get-Command -ParameterName ComputerName
-
-# User Accounts - PowerShell Commands
-# Get-WmiObject -Class Win32_UserAccount -Namespace "root\cimv2" -Filter "LocalAccount='$True'"
-
-# Get-Module -ListAvailable -All -Verbose
-# Get-Module -ListAvailable | where { $_.path -match "System32" }
-
-# Get-Command -Module PowerShellGet | Format-Wide -Column 3
-# Get-Command -ParameterName Cimsession
-
-# Find-Module -Repository PSGallery
-# Find-Module -Name *pip*
-# Find-Module nx* | Format-Table Version, Name, Description
-# Find-Module nx* | Install-Module -Force
-# Find-Module -Tag 'Active Directory', 'ActiveDirectory', 'Active', 'Directory', 'AD'
-
-# Find-Script -Name *pip*
-
 # Get-ChildItem hklm:\software | Get-Member ps*
-
 # Get-Process | sort -Descending ws | select -First 3
 # Get-Process | where Handles -gt 1000
 
-# Get-CimInstance -ClassName Win32_OperatingSystem
-
+# ---------------------------------------------------------
+# User Accounts - PowerShell Commands
+# ---------------------------------------------------------
+# User Accounts - PowerShell Commands
+# Get-WmiObject -Class Win32_UserAccount -Namespace "root\cimv2" -Filter "LocalAccount='$True'"
 
 # Registry - PowerShell Commands
 # cd hklm:\software\microsoft\powershell
@@ -210,5 +287,3 @@ $env:PSModulePath -split ';'
 # Services - PowerShell Commands
 # Get-Service -Name BITS
 
-# Sort / Filter - PowerShell Commands
-# Find-Module -Name *session* -Repository PSGallery | Sort-Object -Property Name | Format-Table -Property Name -HideTableHeaders
