@@ -20,7 +20,8 @@ try {
     # $serversOuPath = 'OU=Servers,DC=powerlab,DC=local'
     # $servers = Get-ADComputer -SearchBase $serversOuPath -Filter * | Select-Object -ExpandProperty Name
     # $servers = Get-ADComputer -Filter * | Select-Object -ExpandProperty Name
-    $servers = Get-ADComputer -Filter * -Properties DNSHostName, Enabled, IPV4Address, Name, LastLogonDate, OperatingSystem, OperatingSystemVersion -ErrorVariable ErrVar -ErrorAction SilentlyContinue
+#    $servers = Get-ADComputer -Filter * -Properties DNSHostName, Enabled, IPV4Address, Name, LastLogonDate, OperatingSystem, OperatingSystemVersion -ErrorVariable ErrVar -ErrorAction SilentlyContinue
+    $servers = Get-ADComputer -Filter * -Properties *
     
     foreach ($server in $servers) {
         

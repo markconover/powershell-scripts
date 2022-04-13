@@ -44,6 +44,7 @@ $env:PSModulePath -split ';'
 #   https://docs.microsoft.com/en-us/learn/browse/?terms=PowerShell
 # Set-ExecutionPolicy Unrestricted
 # Update-Help -Force -Verbose
+# Save-Help -DestinationPath "<DESTINATION_PATH>" -Force -Verbose
 # notepad++ (Get-PSReadLineOption | select -ExpandProperty HistorySavePath)
 # 
 # Install - Chocolatey ("choco")
@@ -147,6 +148,8 @@ $env:PSModulePath -split ';'
 # "Commands" - PowerShell Commands
 
 # Computer Info - PowerShell Commands
+# Get-ADComputer -Identity "<HOSTNAME>" -Properties * -Verbose
+# $servers = Get-ADComputer -Filter * -Properties *
 # Get-ComputerInfo -Property "*version"
 # Write-Host $env:COMPUTERNAME
 # Get-CimClass -ClassName *bios*
@@ -157,6 +160,9 @@ $env:PSModulePath -split ';'
 # Get-CimInstance -ClassName Win32_Environment
 # Get-Help * -Parameter ComputerName
 # Get-Command -ParameterName ComputerName
+
+# User Accounts - PowerShell Commands
+# Get-WmiObject -Class Win32_UserAccount -Namespace "root\cimv2" -Filter "LocalAccount='$True'"
 
 # Get-Module -ListAvailable -All -Verbose
 # Get-Module -ListAvailable | where { $_.path -match "System32" }
@@ -203,3 +209,6 @@ $env:PSModulePath -split ';'
 
 # Services - PowerShell Commands
 # Get-Service -Name BITS
+
+# Sort / Filter - PowerShell Commands
+# Find-Module -Name *session* -Repository PSGallery | Sort-Object -Property Name | Format-Table -Property Name -HideTableHeaders
