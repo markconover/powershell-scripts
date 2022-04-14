@@ -49,12 +49,15 @@ $env:PSModulePath -split ';'
 #   https://github.com/PowerShell/PowerShellGet
 #   https://www.powershellgallery.com/
 #   https://docs.microsoft.com/en-us/learn/browse/?terms=PowerShell
+
 # Set-ExecutionPolicy Unrestricted
 # Update-Help -Force -Verbose
 # Save-Help -DestinationPath "<DESTINATION_PATH>" -Force -Verbose
 # notepad++ (Get-PSReadLineOption | select -ExpandProperty HistorySavePath)
-# 
-# Install - Chocolatey ("choco")
+
+# ---------------------------------------------------------
+# Install - Chocolatey ("choco") - PowerShell Commands
+# ---------------------------------------------------------
 # Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 # choco install advanced-ip-scanner -y --force
 # choco install angryip -y --force
@@ -81,7 +84,9 @@ $env:PSModulePath -split ';'
 # choco install which -y --force
 # choco install zenmap -y --force
 
-# Install - "pip"
+# ---------------------------------------------------------
+# Install - "pip - PowerShell Commands
+# ---------------------------------------------------------
 # py -m pip install --upgrade pip --force
 # py -m pip install pip_search -v
 # py -m pip install --user pipx
@@ -122,7 +127,9 @@ $env:PSModulePath -split ';'
 # pip install xlsxwriter
 # pip install zenmap
 
+# ---------------------------------------------------------
 # "Install-Module" - PowerShell Commands
+# ---------------------------------------------------------
 # Install-Module -Name PowerShellGet -Force -Verbose
 # Install-Module PSReadLine -Force -Verbose
 # Install-Module PSScriptTools -Force -Verbose
@@ -131,7 +138,9 @@ $env:PSModulePath -split ';'
 # Update-Module -Verbose
 # Get-Module -ListAvailable -All
 
+# ---------------------------------------------------------
 # "Install-Script" - PowerShell Commands
+# ---------------------------------------------------------
 # Install-Script -Name CertificateScanner
 # Install-Script -Name Download-AllGalleryModules
 # Install-Script -Name Get-ComputerInfo
@@ -141,11 +150,13 @@ $env:PSModulePath -split ';'
 # Install-Script -Name set-nsssl
 
 # ---------------------------------------------------------
-# PowerShell Commands
+# PowerShell Commands - Notes
 # ---------------------------------------------------------
 # Get-PSRepository | Format-List
 
+# ---------------------------------------------------------
 # Modules - PowerShell Commands
+# ---------------------------------------------------------
 # Find-Module *install*
 # Find-Module -Repository PSGallery
 # Find-Module -Name *pip*
@@ -163,7 +174,9 @@ $env:PSModulePath -split ';'
 # Update-Module -Verbose
 # Get-Module -ListAvailable -All
 
+# ---------------------------------------------------------
 # Scripts - PowerShell Commands
+# ---------------------------------------------------------
 # Find-Script *install*
 # Find-Script -Name *pip*
 # Install-Script -Name CertificateScanner
@@ -174,12 +187,16 @@ $env:PSModulePath -split ';'
 # Install-Script -Name PSGalleryModule
 # Install-Script -Name set-nsssl
 
-# "Commands" - PowerShell Commands
+# ---------------------------------------------------------
+# Commands - PowerShell Commands
+# ---------------------------------------------------------
 # Get-Command -Module PowerShellGet | Format-Wide -Column 3
 # Get-Command -ParameterName Cimsession
 # Get-Command -ParameterName ComputerName
 
+# ---------------------------------------------------------
 # Sort / Filter - PowerShell Commands
+# ---------------------------------------------------------
 # Find-Module -Name *session* -Repository PSGallery | Sort-Object -Property Name | Format-Table -Property Name -HideTableHeaders
 # Get-Process | sort -Descending ws | select -First 3
 # $servers = Get-ADComputer -Filter * -Properties *
@@ -239,9 +256,8 @@ $env:PSModulePath -split ';'
 # ---------------------------------------------------------
 # Computer Info - PowerShell Commands
 # ---------------------------------------------------------
-# Computer Info - PowerShell Commands
-# Get-ADComputer -Identity "<HOSTNAME>" -Properties * -Verbose
 # $servers = Get-ADComputer -Filter * -Properties *
+# Get-ADComputer -Identity "<HOSTNAME>" -Properties * -Verbose
 # Get-ComputerInfo -Property "*version"
 # Write-Host $env:COMPUTERNAME
 # Get-CimClass -ClassName *bios*
@@ -260,30 +276,43 @@ $env:PSModulePath -split ';'
 # ---------------------------------------------------------
 # User Accounts - PowerShell Commands
 # ---------------------------------------------------------
-# User Accounts - PowerShell Commands
 # Get-WmiObject -Class Win32_UserAccount -Namespace "root\cimv2" -Filter "LocalAccount='$True'"
 
+# ---------------------------------------------------------
 # Registry - PowerShell Commands
+# ---------------------------------------------------------
 # cd hklm:\software\microsoft\powershell
 # Get-ChildItem -Path Registry::
 # Get-ChildItem -Path registry::HKEY_CURRENT_CONFIG\System\CurrentControlSet\SERVICES\TSDDD\
 
+# ---------------------------------------------------------
 # Files - PowerShell Commands
+# ---------------------------------------------------------
 # Get-ChildItem -Path C:\ -Filter *.sys -Force
 
-# "netstat" - PowerShell Commands
+# ---------------------------------------------------------
+# "netstat - PowerShell Commands
+# ---------------------------------------------------------
 # netstat -n | select -Skip 4 | ConvertFrom-String -PropertyNames Blank, Protocol, LocalAddress, ForeignAddress, State | Select-Object Protocol, LocalAddress, ForeignAddress, State
 
+# ---------------------------------------------------------
 # "clipboard" - PowerShell Commands
+# ---------------------------------------------------------
 # Get-Clipboard
 
-# Processes - PowerShell Commands
+# ---------------------------------------------------------
+# "Processes" - PowerShell Commands
+# ---------------------------------------------------------
 # Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments @{CommandLine = 'calc.exe'}
 # Get-CimInstance -ClassName Win32_Process -Filter "Name='calculator.exe'"
 
+# ---------------------------------------------------------
 # "Cimsession" - PowerShell Commands
+# ---------------------------------------------------------
 # Get-Command -ParameterName Cimsession
 
+# ---------------------------------------------------------
 # Services - PowerShell Commands
+# ---------------------------------------------------------
 # Get-Service -Name BITS
 
