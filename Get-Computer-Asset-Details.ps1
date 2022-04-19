@@ -109,7 +109,7 @@ try {
 
 # Write Progress 0%
 $ScriptText = [System.Management.Automation.PsParser]::Tokenize((Get-Content "$($MyInvocation.MyCommand.Path)"), [ref]$null)
-$CheckCount = ($ScriptText | Where-Object { $_.Type -eq 'Variable' -and $_.Content -eq 'ItemCount' -and $_.StartColumn -eq 1}).Count
+$CheckCount = ($ScriptText | Where-Object { $_.Type -eq 'Variable' -and $_.Content -eq 'ItemCount' -and $_.StartColumn -eq 1}).Count - 1
 $ProgressID = 0
 Write-Progress -Id $ProgressID -Activity "Initial Setup" -Status "Running" -CurrentOperation "Collecting Info" -PercentComplete (0 /  (($CheckCount) * 100))
 
@@ -121,8 +121,111 @@ $OutFile = "cmdlet_AD-Computer_Listing.csv"
 Try
 {
     Write-Progress -Id $ProgressID -Activity "Check $ItemCount of $CheckCount - $CheckName" -Status "Running" -CurrentOperation "Retrieving results & writing output to $OutputDir\$OutFile" -PercentComplete (($ItemCount /  $CheckCount) * 100)
+     
+    # Enumerate all computers in the domain with all properties
+    #$compobjects = Get-ADComputer -Filter * -Properties *
+
+    # Enumerate all computers in the domain, but only query some of their properties
+    # Get-ADComputer -Filter * -Properties DnsHostName,OperatingSystem,OperatingSystemServicePack | 
+    # Format-List DNSHostName,DistinguishedName,OperatingSystem,OperatingSystemServicePack
+
+    # Enumerate all computers in the 'Domain Controllers' OU with all properties:
+    # Get-ADComputer -SearchBase "OU=Domain Controllers,DC=testing,DC=local" -Filter * -Properties *
+
+    $compobjects = Get-ADComputer -Filter * -Property Name,DNSHostName,Enabled,isCriticalSystemObject,ManagedBy,DisplayName,DistinguishedName,CanonicalName,ObjectCategory,ObjectClass,ObjectSID,OperatingSystem,OperatingSystemServicePack,OperatingSystemVersion,IPv4Address,Description,DisplayName,whenCreated,whenChanged,PasswordLastSet,userAccountControl,MemberOf,PrimaryGroup,adminCount
     
-    $compobjects = Get-ADComputer -Filter * -Property Name,DistinguishedName,ObjectSID,OperatingSystem,OperatingSystemServicePack,OperatingSystemVersion,IPv4Address,whenCreated,whenChanged,PasswordLastSet,userAccountControl
+    # "Get-ADComputer" - Properties
+    # PSComputerName
+    # RunspaceId
+    # PSShowComputerName
+    # AccountExpirationDate
+    # accountExpires
+    # AccountLockoutTime
+    # AccountNotDelegated
+    # adminCount
+    # AllowReversiblePasswordEncryption
+    # AuthenticationPolicy
+    # AuthenticationPolicySilo
+    # BadLogonCount
+    # CannotChangePassword
+    # CanonicalName
+    # Certificates
+    # CN
+    # codePage
+    # CompoundIdentitySupported
+    # countryCode
+    # Created
+    # createTimeStamp
+    # Deleted
+    # Description
+    # DisplayName
+    # DistinguishedName
+    # DNSHostName
+    # DoesNotRequirePreAuth
+    # dSCorePropagationData
+    # Enabled
+    # HomedirRequired
+    # HomePage
+    # instanceType
+    # IPv4Address
+    # IPv6Address
+    # isCriticalSystemObject
+    # isDeleted
+    # KerberosEncryptionType
+    # LastBadPasswordAttempt
+    # LastKnownParent
+    # LastLogonDate
+    # lastLogonTimestamp
+    # localPolicyFlags
+    # Location
+    # LockedOut
+    # ManagedBy
+    # MemberOf
+    # MNSLogonAccount
+    # Modified
+    # modifyTimeStamp
+    # msDFSR-ComputerReferenceBL
+    # msDS-SupportedEncryptionTypes
+    # msDS-User-Account-Control-Computed
+    # Name
+    # nTSecurityDescriptor
+    # ObjectCategory
+    # ObjectClass
+    # ObjectGUID
+    # objectSid
+    # OperatingSystem
+    # OperatingSystemHotfix
+    # OperatingSystemServicePack
+    # OperatingSystemVersion
+    # PasswordExpired
+    # PasswordLastSet
+    # PasswordNeverExpires
+    # PasswordNotRequired
+    # PrimaryGroup
+    # primaryGroupID
+    # PrincipalsAllowedToDelegateToAccount
+    # ProtectedFromAccidentalDeletion
+    # pwdLastSet
+    # rIDSetReferences
+    # SamAccountName
+    # sAMAccountType
+    # sDRightsEffective
+    # serverReferenceBL
+    # ServiceAccount
+    # servicePrincipalName
+    # ServicePrincipalNames
+    # SID
+    # SIDHistory
+    # TrustedForDelegation
+    # TrustedToAuthForDelegation
+    # UseDESKeyOnly
+    # userAccountControl
+    # userCertificate
+    # UserPrincipalName
+    # uSNChanged
+    # uSNCreated
+    # whenChanged
+    # whenCreated
       
     $compobjects | export-csv -path $OutputDir\$OutFile -NoTypeInformation -Encoding utf8
     
@@ -240,10 +343,12 @@ Try
 {
     Write-Progress -Id $ProgressID -Activity "Check $ItemCount of $CheckCount - $CheckName" -Status "Running" -CurrentOperation "Retrieving results & writing output to $OutputDir\$OutFile" -PercentComplete (($ItemCount /  $CheckCount) * 100)
     
-    Get-ADUser -filter * -properties name,samaccountname,sid,enabled,adminCount,DistinguishedName,PasswordNeverExpires,PasswordNotRequired,LastLogonDate,PasswordLastSet,created,Description,Manager,TrustedForDelegation,servicePrincipalNames | 
+    <# Get-ADUser -filter * -properties name,samaccountname,sid,enabled,adminCount,DistinguishedName,PasswordNeverExpires,PasswordNotRequired,LastLogonDate,PasswordLastSet,created,Description,Manager,TrustedForDelegation,servicePrincipalNames | 
         select name,samaccountname,sid,enabled,adminCount,DistinguishedName,PasswordNeverExpires,PasswordNotRequired,LastLogonDate,PasswordLastSet,created,Description,Manager,TrustedForDelegation, @{name=”servicePrincipalNames”;expression={$_.servicePrincipalNames -join “;”}} |
-        export-csv -path $OutputDir\$OutFile -NoTypeInformation
- 
+        export-csv -path $OutputDir\$OutFile -NoTypeInformation #>
+    
+    Get-ADUser -Filter * -Properties * | export-csv -path $OutputDir\$OutFile -NoTypeInformation
+
     Write-Progress -Id $ProgressID -Activity "Check $ItemCount of $CheckCount - $CheckName" -Status "Complete" -CurrentOperation ""
     Add-Content -Path $LogFile -Value "Check $ItemCount of $CheckCount - $CheckName - Success"
 }
