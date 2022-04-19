@@ -342,13 +342,13 @@ $OutFile = "cmdlet_AD-User_Listing.csv"
 Try
 {
     Write-Progress -Id $ProgressID -Activity "Check $ItemCount of $CheckCount - $CheckName" -Status "Running" -CurrentOperation "Retrieving results & writing output to $OutputDir\$OutFile" -PercentComplete (($ItemCount /  $CheckCount) * 100)
-    
-    <# Get-ADUser -filter * -properties name,samaccountname,sid,enabled,adminCount,DistinguishedName,PasswordNeverExpires,PasswordNotRequired,LastLogonDate,PasswordLastSet,created,Description,Manager,TrustedForDelegation,servicePrincipalNames | 
-        select name,samaccountname,sid,enabled,adminCount,DistinguishedName,PasswordNeverExpires,PasswordNotRequired,LastLogonDate,PasswordLastSet,created,Description,Manager,TrustedForDelegation, @{name=”servicePrincipalNames”;expression={$_.servicePrincipalNames -join “;”}} |
-        export-csv -path $OutputDir\$OutFile -NoTypeInformation #>
-    
-    Get-ADUser -Filter * -Properties * | export-csv -path $OutputDir\$OutFile -NoTypeInformation
 
+    # Get-ADUser -Filter * -Properties * | export-csv -path $OutputDir\$OutFile -NoTypeInformation
+    
+    Get-ADUser -filter * -properties name,samaccountname,sid,enabled,adminCount,DistinguishedName,PasswordNeverExpires,PasswordNotRequired,LastLogonDate,PasswordLastSet,created,Description,Manager,TrustedForDelegation,servicePrincipalNames | 
+        select name,samaccountname,sid,enabled,adminCount,DistinguishedName,PasswordNeverExpires,PasswordNotRequired,LastLogonDate,PasswordLastSet,created,Description,Manager,TrustedForDelegation, @{name=”servicePrincipalNames”;expression={$_.servicePrincipalNames -join “;”}} |
+        export-csv -path $OutputDir\$OutFile -NoTypeInformation
+    
     Write-Progress -Id $ProgressID -Activity "Check $ItemCount of $CheckCount - $CheckName" -Status "Complete" -CurrentOperation ""
     Add-Content -Path $LogFile -Value "Check $ItemCount of $CheckCount - $CheckName - Success"
 }
