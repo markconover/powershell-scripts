@@ -75,13 +75,13 @@ Save-Help -DestinationPath "<DESTINATION_PATH>" -Force -Verbose
 ```
 ---------------------------------------------------------
 ## Install PowerShell and other packages
-References:   https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.2
-https://docs.microsoft.com/en-us/powershell/
-https://docs.microsoft.com/en-us/powershell/module/powershellget/install-module?view=powershell-7.2
-https://docs.microsoft.com/en-us/powershell/scripting/samples/working-with-software-installations?view=powershell-7.2#listing-windows-installer-applications
-https://github.com/PowerShell/PowerShellGet
-https://www.powershellgallery.com/
-https://docs.microsoft.com/en-us/learn/browse/?terms=PowerShell
+* [Installing PowerShell on Windows](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.2)
+* [PowerShell](https://docs.microsoft.com/en-us/powershell/)
+* [PowerShellGet](https://github.com/PowerShell/PowerShellGet)
+* [PowerShellGet - Install](https://docs.microsoft.com/en-us/powershell/module/powershellget/install-module?view=powershell-7.2)
+* [Listing Windows Installer Applications](https://docs.microsoft.com/en-us/powershell/scripting/samples/working-with-software-installations?view=powershell-7.2#listing-windows-installer-applications)
+* [PowerShell Gallery](https://www.powershellgallery.com/)
+* [PowerShell - Documentation Search](https://docs.microsoft.com/en-us/learn/browse/?terms=PowerShell)
 
 ```powershell
 Set-ExecutionPolicy Unrestricted
@@ -89,7 +89,6 @@ Update-Help -Force -Verbose
 Save-Help -DestinationPath "<DESTINATION_PATH>" -Force -Verbose
 notepad++ (Get-PSReadLineOption | select -ExpandProperty HistorySavePath)
 ```
-
 ### Install Chocolatey
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
