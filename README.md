@@ -288,6 +288,12 @@ $ChildDomainStatus = foreach ($child in $DomainInfo.ChildDomains){
         }
     }
 }
+
+Get-ADBranch -SearchBase "dc=<COMPANY-NAME>,dc=com" | Format-List -Property name
+
+Show-DomainTree -Verbose
+
+Get-Command -Type All | Select-Object Source  | grep -i "get-ad"
 ```
 
 ---------------------------------------------------------
