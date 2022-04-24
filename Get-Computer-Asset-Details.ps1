@@ -24,7 +24,7 @@
     
 .EXAMPLE
     The following will run and output a CSV file
-    .\Get-Computer-Asset-Details.ps1
+    .\Get-Computer-Asset-Details.ps1 -OutputDir "C:\TEMP"
 
 .LINK
     No links
@@ -34,9 +34,11 @@
 #>
 
 param (
-    [string]$OutputDir = (Read-Host prompt 'Output Path (e.g. "c:\temp")')
+    [Parameter(Mandatory = $false)]
+    [string]$OutputDir = (Read-Host prompt 'Output Path (e.g. "C:\TEMP")')
 )
 
+# Validate the parameter values
 $ErrorText = ''
 If (-Not (Test-Path -Path $OutputDir -PathType Container)) {
     $ErrorText = $OutputDir + " is not a valid directory. "
@@ -48,8 +50,9 @@ If ($ErrorText) {
     Exit
 }
 
-$currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
-If (-Not $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)){
+# Verify running as Administrator user
+$isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")
+If (-not $isAdmin) {
     Write-Output 'PowerShell session is not elevated! Please re-run from a elevated session.' -BackgroundColor Yellow -ForegroundColor Black
     Exit
 }
@@ -93,13 +96,13 @@ If ($version -le 5){
     Exit
 }
 
+# Import required PowerShell modules
 try {
     Import-Module ActiveDirectory -ErrorAction Stop
 } catch {
     Write-Output "Unable to import module ActiveDirectory! Ensure it is available on this system." -BackgroundColor Yellow -ForegroundColor Black
     Break
 }
-
 try {
     Import-Module GroupPolicy -ErrorAction Stop
 } catch {
@@ -112,6 +115,44 @@ $ScriptText = [System.Management.Automation.PsParser]::Tokenize((Get-Content "$(
 $CheckCount = ($ScriptText | Where-Object { $_.Type -eq 'Variable' -and $_.Content -eq 'ItemCount' -and $_.StartColumn -eq 1}).Count - 1
 $ProgressID = 0
 Write-Progress -Id $ProgressID -Activity "Initial Setup" -Status "Running" -CurrentOperation "Collecting Info" -PercentComplete (0 /  (($CheckCount) * 100))
+
+# Output Active Directory (AD) Forest and Domain information
+$ForestInfo = Get-ADForest -Current LocalComputer
+$DomainInfo = Get-ADDomain -Current LocalComputer
+$SearchBase = $DomainInfo.DistinguishedName
+Add-Content -Path $LogFile -Value "Domain FQDN: $($DomainInfo.DNSRoot)"
+Add-Content -Path $LogFile -Value "Domain NetBIOS: $($DomainInfo.NetBIOSName)"
+Add-Content -Path $LogFile -Value "Script Reference: $($ScriptText[0].Content)"
+Add-Content -Path $LogFile -Value "----------------------------------------------------"
+If ($DomainInfo.DomainSID.GetType().Name -eq 'String'){
+    $DomainSID = $DomainInfo.DomainSID
+} Else {
+    $DomainSID = ($DomainInfo | Select-Object -ExpandProperty DomainSID).Value
+}
+$Groups = [PSObject] @{
+    "Domain Admins" = $DomainSID+"-512"
+    "Enterprise Admins" = $DomainSID+"-519"
+    "Schema Admins" = $DomainSID+"-518"
+    "Administrators" = "S-1-5-32-544"
+    "Account Operators" = "S-1-5-32-548"
+    "Backup Operators" = "S-1-5-32-551"
+    "Cert Publishers" = $DomainSID+"-517"
+    "Print Operators" = "S-1-5-32-550"
+    "Server Operators" = "S-1-5-32-549"
+    "Replicator" = "S-1-5-32-552"
+    "Group Policy Creator Owners" = $DomainSID+"-520"
+    "Denied RODC Password Replication Group" = $DomainSID+"-572"
+    "Distributed COM Users" = "S-1-5-32-562"
+}
+$additionalGroups = 'DNSAdmins'
+foreach ($grp in $additionalGroups){
+    try {$grpInfo = Get-ADGroup $grp}catch{}
+    if ($grpInfo){
+        $Groups.Add($grpInfo.Name,$grpInfo.sid)
+        Clear-Variable grpInfo
+    }
+}
+
 
 # Check 1 - Output of Computer Objects
 $ItemCount = 1
@@ -591,115 +632,5 @@ note that this requires a DNS query for every name, which may fail:
 
 
 <# # Find users with AdminCount = 1:
-
-Import-Module -Name ActiveDirectory
-
 Get-ADUser -Filter { AdminCount -eq 1 } -Properties * 
  #>
-
-######################################################################
-
-<# This is a template for creating an advanced function (aka, "script
-cmdlet") in PowerShell 2.0 and later.  See the following help:
-
-   get-help about_Functions_Advanced
-   get-help about_Functions_Advanced_Methods
-   get-help about_Functions_Advanced_Parameters
-   get-help about_Functions_CmdletBindingAttribute
-   get-help about_Functions_OutputTypeAttribute #>
-
-######################################################################
-
-
-
-# <#
-# .SYNOPSIS
-   # Short description of function
-
-# .DESCRIPTION
-   # Long description
-
-# .EXAMPLE
-   # Example of how to use this function
-
-# .EXAMPLE
-   # Another example of how to use this function
-
-# .INPUTS
-   # Inputs to this function, if any
-
-# .OUTPUTS
-   # Output from this function, if any
-
-# .COMPONENT
-   # The component this function belongs to
-
-# .ROLE
-   # The role this function belongs to
-
-# .FUNCTIONALITY
-   # The functionality that best describes this function
-
-# .NOTES
-   # General notes, author, version, licensing
-# >
-# function Verb-Noun
-# {
-    # [CmdletBinding(DefaultParameterSetName='Parameter Set 1', 
-                  # SupportsShouldProcess=$true, 
-                  # PositionalBinding=$false,
-                  # HelpUri = 'http://www.sans.org/sec505',
-                  # ConfirmImpact='Medium')]
-    # [OutputType([String])]
-    # Param
-    # (
-        # Param1 help description
-        # [Parameter(Mandatory=$true, 
-                   # ValueFromPipeline=$true,
-                   # ValueFromPipelineByPropertyName=$true, 
-                   # ValueFromRemainingArguments=$false, 
-                   # Position=0,
-                   # ParameterSetName='Parameter Set 1')]
-        # [ValidateNotNull()]
-        # [ValidateNotNullOrEmpty()]
-        # [ValidateCount(0,5)]
-        # [ValidateSet("List", "of", "valid", "arguments")]
-        # [Alias("p1")] 
-        # $Param1,
-
-        # Param2 help description
-        # [Parameter(ParameterSetName='Parameter Set 1')]
-        # [AllowNull()]
-        # [AllowEmptyCollection()]
-        # [AllowEmptyString()]
-        # [ValidateScript({ script block to validate arg, must return $true or $false })]
-        # [ValidateRange(0,5)]
-        # [int]
-        # $Param2,
-
-        # Param3 help description
-        # [Parameter(ParameterSetName='Another Parameter Set')]
-        # [ValidatePattern("regex pattern to match")]
-        # [ValidateLength(0,15)]
-        # [String]
-        # $Param3
-    # )
-
-    # BEGIN
-    # {
-        # Optional BEGIN block executed first and only once.
-    # }
-
-    # PROCESS
-    # {
-        # PROCESS block executed for each piped-in object, if any,
-        # or run only once if the function is the first command in
-        # a statement or pipeline of commands.  The block is mandatory
-        # if any parameter is set to accept ValueFromPipeline=$True.
-    # }
-    
-    # END
-    # {
-        # Optional END block executed last and only once.
-    # }
-# }
