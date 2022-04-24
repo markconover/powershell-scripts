@@ -164,7 +164,8 @@ pip install zenmap
 ## git - Update all local repos
 ```powershell
 cd <GITHUB-PROJECTS-FOLDER-PATH>
-Get-ChildItem -Directory | foreach { Write-Host "`n Getting latest for $_ ↓" -ForegroundColor Green | git -C $_.FullName pull --all --recurse-submodules --verbose }
+
+Get-ChildItem -Path "E:\Exclusions\github-projects" | foreach {git -C $_.FullName pull --force --all --recurse-submodules --verbose}
 ```
 
 ## Install Module
