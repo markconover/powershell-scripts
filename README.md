@@ -161,6 +161,12 @@ pip install xlsxwriter
 pip install zenmap
 ```
 
+## git - Update all local repos
+```powershell
+cd <GITHUB-PROJECTS-FOLDER-PATH>
+Get-ChildItem -Directory | foreach { Write-Host "`n Getting latest for $_ ↓" -ForegroundColor Green | git -C $_.FullName pull --all --recurse-submodules --verbose }
+```
+
 ## Install Module
 ```powershell
 Install-Module -Name PowerShellGet -Force -Verbose
