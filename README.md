@@ -232,10 +232,12 @@ Install-Script -Name set-nsssl
 ---------------------------------------------------------
 ## Commands
 ```powershell
-# Gets all command names locally installed
+# Get all command names locally installed
 (Get-Command *).Name | Sort -Unique
-# Gets all command names locally installed (that start with "Get-AD")
+# Get all command names locally installed (that start with "Get-AD")
 (Get-Command *).Name | Sort -Unique | grep -i get\-ad
+# Get cmdlets and functions that have an output type
+Get-Command -Type Cmdlet | Where-Object OutputType | Format-List -Property Name, OutputType
 Get-Command -Module PowerShellGet | Format-Wide -Column 3
 Get-Command -ParameterName Cimsession
 Get-Command -ParameterName ComputerName
@@ -257,6 +259,7 @@ Get-ChildItem hklm:\software | Get-Member ps*
 ---------------------------------------------------------
 ## Active Directory
 ```powershell
+Get-ADComputerReport -Verbose *>&1 | Tee-Object -FilePath "output_Get-ADComputerReport_command_2022-04-25.txt"
 $ForestInfo = Get-ADForest -Current LocalComputer
 $DomainInfo = Get-ADDomain -Current LocalComputer
 Show-DomainTree
