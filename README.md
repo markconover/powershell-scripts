@@ -232,6 +232,10 @@ Install-Script -Name set-nsssl
 ---------------------------------------------------------
 ## Commands
 ```powershell
+# Gets all command names locally installed
+(Get-Command *).Name | Sort -Unique
+# Gets all command names locally installed (that start with "Get-AD")
+(Get-Command *).Name | Sort -Unique | grep -i get\-ad
 Get-Command -Module PowerShellGet | Format-Wide -Column 3
 Get-Command -ParameterName Cimsession
 Get-Command -ParameterName ComputerName

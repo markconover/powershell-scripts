@@ -288,7 +288,7 @@ Try
 {
     Write-Progress -Id $ProgressID -Activity "Check $ItemCount of $CheckCount - $CheckName" -Status "Running" -CurrentOperation "Retrieving results & writing output to $OutputDir\$OutFile" -PercentComplete (($ItemCount /  $CheckCount) * 100)
     
-    Get-ADForest | Select-Object Name,ForestMode,DomainNamingMaster,SchemaMaster | Export-Csv -Path $OutputDir\$OutFile -NoTypeInformation
+    Get-ADForest | Select-Object Name,ForestMode,DomainNamingMaster,SchemaMaster | Export-Csv -Path $OutputDir\$OutFile -NoTypeInformation -Encoding utf8
     
     Write-Progress -Id $ProgressID -Activity "Check $ItemCount of $CheckCount - $CheckName" -Status "Complete" -CurrentOperation ""
     Add-Content -Path $LogFile -Value "Check $ItemCount of $CheckCount - $CheckName - Success"
@@ -384,11 +384,11 @@ Try
 {
     Write-Progress -Id $ProgressID -Activity "Check $ItemCount of $CheckCount - $CheckName" -Status "Running" -CurrentOperation "Retrieving results & writing output to $OutputDir\$OutFile" -PercentComplete (($ItemCount /  $CheckCount) * 100)
 
-    # Get-ADUser -Filter * -Properties * | export-csv -path $OutputDir\$OutFile -NoTypeInformation
+    # Get-ADUser -Filter * -Properties * | export-csv -path $OutputDir\$OutFile -NoTypeInformation -Encoding utf8
     
     Get-ADUser -filter * -properties name,samaccountname,sid,enabled,adminCount,DistinguishedName,PasswordNeverExpires,PasswordNotRequired,LastLogonDate,PasswordLastSet,created,Description,Manager,TrustedForDelegation,servicePrincipalNames | 
         select name,samaccountname,sid,enabled,adminCount,DistinguishedName,PasswordNeverExpires,PasswordNotRequired,LastLogonDate,PasswordLastSet,created,Description,Manager,TrustedForDelegation, @{name=”servicePrincipalNames”;expression={$_.servicePrincipalNames -join “;”}} |
-        export-csv -path $OutputDir\$OutFile -NoTypeInformation
+        Export-Csv -path $OutputDir\$OutFile -NoTypeInformation -Encoding utf8
     
     Write-Progress -Id $ProgressID -Activity "Check $ItemCount of $CheckCount - $CheckName" -Status "Complete" -CurrentOperation ""
     Add-Content -Path $LogFile -Value "Check $ItemCount of $CheckCount - $CheckName - Success"
@@ -408,7 +408,7 @@ Try
 {
     Write-Progress -Id $ProgressID -Activity "Check $ItemCount of $CheckCount - $CheckName" -Status "Running" -CurrentOperation "Retrieving results & writing output to $OutputDir\$OutFile" -PercentComplete (($ItemCount /  $CheckCount) * 100)
     
-    get-ADUser -Filter {Enabled -eq $false} | export-csv -path $OutputDir\$OutFile -NoTypeInformation
+    get-ADUser -Filter {Enabled -eq $false} | export-csv -path $OutputDir\$OutFile -NoTypeInformation -Encoding utf8
     
     Write-Progress -Id $ProgressID -Activity "Check $ItemCount of $CheckCount - $CheckName" -Status "Complete" -CurrentOperation ""
     Add-Content -Path $LogFile -Value "Check $ItemCount of $CheckCount - $CheckName - Success"
@@ -429,7 +429,7 @@ Try
     Write-Progress -Id $ProgressID -Activity "Check $ItemCount of $CheckCount - $CheckName" -Status "Running" -CurrentOperation "Retrieving results & writing output to $OutputDir\$OutFile" -PercentComplete (($ItemCount /  $CheckCount) * 100)
     
     $Inactive = (get-date).AddDays(-30)
-    get-Aduser -filter {(LastLogonDate -le $Inactive) -AND (PasswordLastSet -le $Inactive) -AND (Enabled -eq $True)} -property SAMAccountName,DisplayName,LastLogonDate,PasswordLastSet,Description,Created,UserPrincipalName | select SamAccountName,DistinguishedName,Description,LastLogonDate,PasswordLastSet | Export-Csv -Path $OutputDir\$OutFile -NoTypeInformation
+    get-Aduser -filter {(LastLogonDate -le $Inactive) -AND (PasswordLastSet -le $Inactive) -AND (Enabled -eq $True)} -property SAMAccountName,DisplayName,LastLogonDate,PasswordLastSet,Description,Created,UserPrincipalName | select SamAccountName,DistinguishedName,Description,LastLogonDate,PasswordLastSet | Export-Csv -Path $OutputDir\$OutFile -NoTypeInformation -Encoding utf8
     
     Write-Progress -Id $ProgressID -Activity "Check $ItemCount of $CheckCount - $CheckName" -Status "Complete" -CurrentOperation ""
     Add-Content -Path $LogFile -Value "Check $ItemCount of $CheckCount - $CheckName - Success"
@@ -450,7 +450,7 @@ Try
     Write-Progress -Id $ProgressID -Activity "Check $ItemCount of $CheckCount - $CheckName" -Status "Running" -CurrentOperation "Retrieving results & writing output to $OutputDir\$OutFile" -PercentComplete (($ItemCount /  $CheckCount) * 100)
     
     $Inactive = (get-date).AddDays(-30)
-    get-AdComputer -filter {(LastLogonDate -le $Inactive) -AND (PasswordLastSet -le $Inactive) -AND (Enabled -eq $True)} -property Name,IPv4Address,LastLogonDate,PasswordLastSet,Description,Created,DNSHostName | select SamAccountName,DistinguishedName,IPv4Address,LastLogonDate,PasswordLastSet | Export-Csv -Path $Outputdir\$OutFile -NoTypeInformation
+    get-AdComputer -filter {(LastLogonDate -le $Inactive) -AND (PasswordLastSet -le $Inactive) -AND (Enabled -eq $True)} -property Name,IPv4Address,LastLogonDate,PasswordLastSet,Description,Created,DNSHostName | select SamAccountName,DistinguishedName,IPv4Address,LastLogonDate,PasswordLastSet | Export-Csv -Path $Outputdir\$OutFile -NoTypeInformation -Encoding utf8
     
     Write-Progress -Id $ProgressID -Activity "Check $ItemCount of $CheckCount - $CheckName" -Status "Complete" -CurrentOperation ""
     Add-Content -Path $LogFile -Value "Check $ItemCount of $CheckCount - $CheckName - Success"
@@ -471,9 +471,137 @@ Try
 {
     Write-Progress -Id $ProgressID -Activity "Check $ItemCount of $CheckCount - $CheckName" -Status "Running" -CurrentOperation "Retrieving results & writing output to $OutputDir\$OutFile" -PercentComplete (($ItemCount /  $CheckCount) * 100)   
     
-    get-AdUser -Filter 'useraccountcontrol -band 32 -and samaccounttype -ne 805306370' -Properties useraccountcontrol | select-object Name,DistinguishedName | export-csv -path $OutputDir\$OutFile -NoTypeInformation
+    get-AdUser -Filter 'useraccountcontrol -band 32 -and samaccounttype -ne 805306370' -Properties useraccountcontrol | select-object Name,DistinguishedName | export-csv -path $OutputDir\$OutFile -NoTypeInformation -Encoding utf8
     
-    get-ADUser -Filter 'useraccountcontrol -band 32 -and Enabled -eq $True' -Properties useraccountcontrol | select-object Name,DistinguishedName | export-csv -path $OutputDir\$OutFile2 -NoTypeInformation
+    get-ADUser -Filter 'useraccountcontrol -band 32 -and Enabled -eq $True' -Properties useraccountcontrol | select-object Name,DistinguishedName | export-csv -path $OutputDir\$OutFile2 -NoTypeInformation -Encoding utf8
+    
+    Write-Progress -Id $ProgressID -Activity "Check $ItemCount of $CheckCount - $CheckName" -Status "Complete" -CurrentOperation ""
+    Add-Content -Path $LogFile -Value "Check $ItemCount of $CheckCount - $CheckName - Success"
+}
+Catch
+{
+    Write-Progress -Id $ProgressID -Activity "Check $ItemCount of $CheckCount - $CheckName" -Status "Failed" -CurrentOperation ""
+    Add-Content -Path $LogFile -Value "Check $ItemCount of $CheckCount - $CheckName - Failed"
+}
+$ItemCount++
+
+# Check 11 - Trusted Information
+$Error.Clear()
+$CheckName = "Trust Information"
+$OutFile = "$cmdlet_ad-trusts-all.csv"
+Try
+{
+    Write-Progress -Id $ProgressID -Activity "Check $ItemCount of $CheckCount" -Status "Running" -CurrentOperation "Retrieving results & writing output to $OutputDir\$OutFile" -PercentComplete (($ItemCount /  $CheckCount) * 100)
+    
+    If (!($DomainInfo)){
+        $DomainInfo = Get-ADDomain
+    }
+    If (!($SearchBase)){
+        $SearchBase = $DomainInfo.DistinguishedName
+    }
+    If (!($version)){
+        $version = $PSVersionTable.PSVersion.Major
+    }
+    If (!($compInfo)){
+        If ($version -gt 2){
+            $compInfo = Get-CimInstance -ClassName Win32_OperatingSystem
+        } Else {
+            $compInfo = Get-WMIObject -Class Win32_OperatingSystem
+        }
+    }
+    Function Get-TrustType {
+        Param (
+            [Parameter(Mandatory = $True)]
+            [int32]$Value
+        )
+        switch ($Value)
+        {
+            "1" {"Windows NT (Downlevel)"}
+            "2" {"Active Directory (Uplevel)"}
+            "3" {"Kerberos v5 REALM (Non-Windows environment)"}
+            "4" {"DCE"}
+            Default {"N/A"}
+        }
+    }
+    Function Get-TrustDirection {
+        Param(
+            [Parameter(Mandatory = $True)]
+            [int32]$Value
+        )
+        switch ($Value)
+        {
+            "1" {"Inbound"}
+            "2" {"Outbound"}
+            "3" {"Bi-directional"}
+            Default {"N/A"}
+        }
+    }
+    Function Get-TrustEncryption {
+        Param (
+            [int32]$Value
+        )
+        If (($null -eq $Value) -or ($Value -eq '')){
+            return 'RC4 (Default)'
+        } Else {
+            $TrustEncryption = @()
+            if($Value -band 0x00000001){$TrustEncryption+='CRC'}
+            if($Value -band 0x00000002){$TrustEncryption+='MD5'}
+            if($Value -band 0x00000004){$TrustEncryption+='RC4'}
+            if($Value -band 0x00000008){$TrustEncryption+='AES128'}
+            if($Value -band 0x00000010){$TrustEncryption+='AES256'}
+            return $TrustEncryption
+        }
+    }
+    $params = @{
+        Class = 'Microsoft_DomainTrustStatus'
+        Namespace = 'root\MicrosoftActiveDirectory'
+    }
+    If ($version -gt 2){
+        If ($compInfo.ProductType -eq 2){
+            $query = Get-CIMInstance @params -ErrorVariable TrustErr
+        } Else {
+            $query = Get-CIMInstance @params -ComputerName $DomainInfo.PDCEmulator -ErrorVariable TrustErr
+        }
+    } Else {
+        If ($compInfo.ProductType -eq 2){
+            $query = @(Get-WMIObject @params -ErrorVariable TrustErr)
+        } Else {
+            $query = @(Get-WMIObject @params -ComputerName $DomainInfo.PDCEmulator -ErrorVariable TrustErr)
+        }
+    }
+    $ADTrustObjs = Get-ADObject -SearchBase "CN=System,$SearchBase" -Filter "ObjectClass -eq 'trustedDomain'" -Properties *
+    if ($query){
+        $Data = foreach ($trust in $query){
+            $ADObj = $ADTrustObjs | Where-Object {$_.securityIdentifier.Value -eq $trust.SID}
+            New-Object -TypeName PSObject -Property @{
+                'Direction' = Get-TrustDirection $trust.TrustDirection
+                'DisallowTransivity' = [Boolean]($trust.TrustAttributes -band 0x00000001)
+                'DistinguishedName' = $ADObj.DistinguishedName
+                'ForestTransitive' = [Boolean]($trust.TrustAttributes -band 0x00000008)
+                'IntraForest' = [Boolean]($trust.TrustAttributes -band 0x000000020)
+                'Name' = $ADObj.Name
+                'ObjectClass' = $ADObj.ObjectClass
+                'ObjectGUID' = $ADObj.ObjectGUID
+                'SelectiveAuthentication' = [Boolean]($trust.TrustAttributes -band 0x000000010)
+                'SIDFilteringForestAware' = [Boolean]($trust.TrustAttributes -band 0x000000040)
+                'SIDFilteringQuarantined' = [Boolean]($trust.TrustAttributes -band 0x000000004)
+                'Source' = $DomainInfo.DistinguishedName
+                'Target' = $ADObj.trustPartner
+                'TGTDelegation' = [Boolean]($trust.TrustAttributes -band 0x000000800)
+                'TrustAttributes' = $trust.TrustAttributes
+                'TrustType' = Get-TrustType $trust.TrustType
+                'TrustIsOk' = $trust.TrustIsOk
+                'SupportedEncryptionTypes' = [string](Get-TrustEncryption $ADObj.'msDS-SupportedEncryptionTypes')
+                'RemoteDomainSID' = $trust.SID
+            }
+        }
+        $Data |
+            Select-Object Direction,DisallowTransivity,DistinguishedName,ForestTransitive,IntraForest,
+            Name,ObjectClass,ObjectGUID,SelectiveAuthentication,SIDFilteringForestAware,
+            SIDFilteringQuarantined,Source,Target,TGTDelegation,TrustAttributes,TrustType,
+            TrustIsOk,SupportedEncryptionTypes,RemoteDomainSID |
+            Export-Csv -Path $OutputDir\$OutFile -NoTypeInformation -Encoding utf8
+    }
     
     Write-Progress -Id $ProgressID -Activity "Check $ItemCount of $CheckCount - $CheckName" -Status "Complete" -CurrentOperation ""
     Add-Content -Path $LogFile -Value "Check $ItemCount of $CheckCount - $CheckName - Success"
