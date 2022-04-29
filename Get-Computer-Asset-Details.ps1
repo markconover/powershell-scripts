@@ -173,100 +173,102 @@ Try
     # Enumerate all computers in the 'Domain Controllers' OU with all properties:
     # Get-ADComputer -SearchBase "OU=Domain Controllers,DC=testing,DC=local" -Filter * -Properties *
 
-    $compobjects = Get-ADComputer -Filter * -Property Name,DNSHostName,Enabled,isCriticalSystemObject,ManagedBy,DisplayName,DistinguishedName,CanonicalName,ObjectCategory,ObjectClass,ObjectSID,OperatingSystem,OperatingSystemServicePack,OperatingSystemVersion,IPv4Address,Description,DisplayName,whenCreated,whenChanged,PasswordLastSet,userAccountControl,MemberOf,PrimaryGroup,adminCount
-    
-    # "Get-ADComputer" - Properties
-    # PSComputerName
-    # RunspaceId
-    # PSShowComputerName
-    # AccountExpirationDate
-    # accountExpires
-    # AccountLockoutTime
-    # AccountNotDelegated
-    # adminCount
-    # AllowReversiblePasswordEncryption
-    # AuthenticationPolicy
-    # AuthenticationPolicySilo
-    # BadLogonCount
-    # CannotChangePassword
-    # CanonicalName
-    # Certificates
-    # CN
-    # codePage
-    # CompoundIdentitySupported
-    # countryCode
-    # Created
-    # createTimeStamp
-    # Deleted
-    # Description
-    # DisplayName
-    # DistinguishedName
-    # DNSHostName
-    # DoesNotRequirePreAuth
-    # dSCorePropagationData
-    # Enabled
-    # HomedirRequired
-    # HomePage
-    # instanceType
-    # IPv4Address
-    # IPv6Address
-    # isCriticalSystemObject
-    # isDeleted
-    # KerberosEncryptionType
-    # LastBadPasswordAttempt
-    # LastKnownParent
-    # LastLogonDate
-    # lastLogonTimestamp
-    # localPolicyFlags
-    # Location
-    # LockedOut
-    # ManagedBy
-    # MemberOf
-    # MNSLogonAccount
-    # Modified
-    # modifyTimeStamp
-    # msDFSR-ComputerReferenceBL
-    # msDS-SupportedEncryptionTypes
-    # msDS-User-Account-Control-Computed
-    # Name
-    # nTSecurityDescriptor
-    # ObjectCategory
-    # ObjectClass
-    # ObjectGUID
-    # objectSid
-    # OperatingSystem
-    # OperatingSystemHotfix
-    # OperatingSystemServicePack
-    # OperatingSystemVersion
-    # PasswordExpired
-    # PasswordLastSet
-    # PasswordNeverExpires
-    # PasswordNotRequired
-    # PrimaryGroup
-    # primaryGroupID
-    # PrincipalsAllowedToDelegateToAccount
-    # ProtectedFromAccidentalDeletion
-    # pwdLastSet
-    # rIDSetReferences
-    # SamAccountName
-    # sAMAccountType
-    # sDRightsEffective
-    # serverReferenceBL
-    # ServiceAccount
-    # servicePrincipalName
-    # ServicePrincipalNames
-    # SID
-    # SIDHistory
-    # TrustedForDelegation
-    # TrustedToAuthForDelegation
-    # UseDESKeyOnly
-    # userAccountControl
-    # userCertificate
-    # UserPrincipalName
-    # uSNChanged
-    # uSNCreated
-    # whenChanged
-    # whenCreated
+    # To get a list of all the properties of an ADComputer object, use the following command:
+    # Get-ADComputer -Properties * <computer> | Get-Member
+    # Reference: https://docs.microsoft.com/en-us/powershell/module/activedirectory/get-adcomputer?view=windowsserver2019-ps#parameters
+    $compobjects = Get-ADComputer -Filter * -Property Name,DNSHostName,Enabled,isCriticalSystemObject,ManagedBy,DisplayName,DistinguishedName,CanonicalName,ObjectCategory,ObjectClass,ObjectSID,OperatingSystem,OperatingSystemServicePack,OperatingSystemVersion,IPv4Address,Description,whenCreated,whenChanged,PasswordLastSet,userAccountControl,MemberOf,PrimaryGroup,adminCount
+
+<#     "Get-ADComputer" - Properties
+    AccountExpirationDate                
+    accountExpires                       
+    AccountLockoutTime                   
+    AccountNotDelegated                  
+    adminCount                           
+    AllowReversiblePasswordEncryption    
+    AuthenticationPolicy                 
+    AuthenticationPolicySilo             
+    BadLogonCount                        
+    CannotChangePassword                 
+    CanonicalName                        
+    Certificates                         
+    CN                                   
+    codePage                             
+    CompoundIdentitySupported            
+    countryCode                          
+    Created                              
+    createTimeStamp                      
+    Deleted                              
+    Description                          
+    DisplayName                          
+    DistinguishedName                    
+    DNSHostName                          
+    DoesNotRequirePreAuth                
+    dSCorePropagationData                
+    Enabled                              
+    HomedirRequired                      
+    HomePage                             
+    instanceType                         
+    IPv4Address                          
+    IPv6Address                          
+    isCriticalSystemObject               
+    isDeleted                            
+    KerberosEncryptionType               
+    LastBadPasswordAttempt               
+    LastKnownParent                      
+    LastLogonDate                        
+    lastLogonTimestamp                   
+    localPolicyFlags                     
+    Location                             
+    LockedOut                            
+    ManagedBy                            
+    MemberOf                                                             
+    MNSLogonAccount                      
+    Modified                             
+    modifyTimeStamp                      
+    msDFSR-ComputerReferenceBL           
+    msDS-SupportedEncryptionTypes        
+    msDS-User-Account-Control-Computed   
+    Name                                 
+    nTSecurityDescriptor                 
+    ObjectCategory                       
+    ObjectClass                          
+    ObjectGUID                           
+    objectSid                            
+    OperatingSystem                      
+    OperatingSystemHotfix                
+    OperatingSystemServicePack           
+    OperatingSystemVersion               
+    PasswordExpired                      
+    PasswordLastSet                      
+    PasswordNeverExpires                 
+    PasswordNotRequired                  
+    PrimaryGroup                         
+    primaryGroupID                       
+    PrincipalsAllowedToDelegateToAccount 
+    ProtectedFromAccidentalDeletion      
+    pwdLastSet                           
+    rIDSetReferences                     
+    RunspaceId                           
+    SamAccountName                       
+    sAMAccountType                       
+    sDRightsEffective                    
+    serverReferenceBL                    
+    ServiceAccount                       
+    servicePrincipalName                 
+    ServicePrincipalNames                
+    SID                                  
+    SIDHistory                           
+    TrustedForDelegation                 
+    TrustedToAuthForDelegation           
+    UseDESKeyOnly                        
+    userAccountControl                   
+    userCertificate                      
+    UserPrincipalName                    
+    uSNChanged                           
+    uSNCreated                           
+    whenChanged                          
+    whenCreated
+ #>
       
     $compobjects | export-csv -path $OutputDir\$OutFile -NoTypeInformation -Encoding utf8
     
