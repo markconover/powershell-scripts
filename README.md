@@ -253,6 +253,12 @@ Get-WmiObject -Class Win32_UserAccount -Namespace "root\cimv2" -Filter "LocalAcc
 Get-ChildItem -Path C:\ -Filter *.sys -Force
 Get-CimInstance -ClassName Win32_Process -Filter "Name='calculator.exe'"
 Get-ChildItem hklm:\software | Get-Member ps*
+
+# Sort by "Management*" AD Group Names
+Get-ADGroup -Filter { Name -like "*Management*" } | Select-Object -Property Name | Sort-Object -Property Name -Unique
+
+# Sort by "*admin*" AD Group Names
+Get-ADGroup -Filter { Name -like "*admin*" } | Select-Object -Property Name | Sort-Object -Property Name -Unique
 ```
 
 ---------------------------------------------------------
@@ -265,6 +271,9 @@ Get-Process | Export-Excel .\output.xlsx -WorksheetName Processes -ChartType Pie
 ---------------------------------------------------------
 ## Active Directory
 ```powershell
+# Get all the PowerShell commands that start with "Get-AD*"
+(Find-Module -Name *-ad* -Repository PSGallery).Name | ForEach-Object {Get-Command -Module $_.Name} | Export-Csv -Path .\report_all-modules_with_-ad_in-name.csv -Encoding UTF8 
+
 Get-ADComputerReport -Verbose *>&1 | Tee-Object -FilePath "output_Get-ADComputerReport_command_2022-04-25.txt"
 $ForestInfo = Get-ADForest -Current LocalComputer
 $DomainInfo = Get-ADDomain -Current LocalComputer
