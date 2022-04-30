@@ -625,6 +625,9 @@ Add-Content -Path $ErrorLogFile -Value "Total Elapsed Time:  $elapsed"
 $ErrorActionPreference = $OldErrorState
 Write-Progress -Activity "Script has completed" -Status "Completed" -Completed
 
+# ---------------------------------------------------------
+# TODO - Checks (Active Directory Posture Checks)
+# ---------------------------------------------------------
 # Check to ensure path is valid
 # Check - Forest Functional Level Information
 # Check - Domain Functional Level Information
@@ -690,8 +693,9 @@ Write-Progress -Activity "Script has completed" -Status "Completed" -Completed
 # Check - Get LAPS Status of Computer Objects in the Domain
 # Check - Get Elevated Site Level Permissions in the Domain
 # Check - Get Get AdminSDHolder-Permissions in the Domain
-
-
+# ---------------------------------------------------------
+# TODO - Functions
+# ---------------------------------------------------------
 # function Get-SslCertificate {
 # function Get-AccessedFile{
 # function Get-ActiveComputer{
@@ -734,8 +738,70 @@ Write-Progress -Activity "Script has completed" -Status "Completed" -Completed
 # function Get-SubDirectorySize{
 # function Get-UserActiveLogon{
 # function Get-UserLastLogonTime{
-
-
+# ---------------------------------------------------------
+# Findings - Examples
+# ---------------------------------------------------------
+<# Risk	Column1	Level of Effort
+Critical	ADSA-C-01: Review and Mitigate User Accounts with the “PasswordNotRequired” Attribute Set	Low
+High	ADSA-H-01: Review Domain Privileged Accounts in Built-in Groups	High
+High	ADSA-H-02: Review and Mitigate Accounts with Non-Expiring Passwords	High
+High	ADSA-H-03: Review Sensitive Accounts That Can Be Delegated	High
+High	ADSA-H-06: Enforce Logon Restrictions and Minimize the Exposure of Privileged Accounts 	High
+High	ADSA-H-17: Implement Multi-Factor Authentication for Elevated Privileged Accounts	High
+High	ADSA-M-22: Enhance Enforced Password Policies	High
+High	ADSA-M-26: Implement a Privileged Access Management (PAM) tool	High
+High	ADSA-H-04: Rotate Password for Built-in Domain Administrator Account	High
+High	ADSA-H-19: Review Domain Accounts in the DNSAdmins Group	High
+High	ADSA-H-08: Enforce Monitoring on Domain Controllers for the DSRM Account 	Low
+High	ADSA-H-18: Review DCSync Detection and Monitoring	Low
+High	ADSA-H-05: Reduce Permissions for Local Accounts to be Leveraged for Remote Authentication	Medium
+High	ADSA-H-07: Review Service Account Permissions and Enforce Service Account Tiering	Medium
+High	ADSA-H-14: Disable WDigest Authentication	Medium
+High	ADSA-H-15: Harden UAC Bypass	Medium
+High	ADSA-H-20: Review Non-Computer Accounts Configured with Service Principal Names (SPNs)	Medium
+High	ADSA-H-09: Deploy Microsoft LAPS to Servers and Workstations	Medium
+High	ADSA-H-10: Enhance LAN Manager Authentication Level for Endpoints 	Medium
+High	ADSA-H-11: Leverage Windows Defender Credential Guard	Medium
+High	ADSA-H-16: Limit Server Egress Traffic	Medium
+High	ADSA-H-05: Reduce Permissions for Local Accounts to be Leveraged for Remote Authentication	Medium
+High	ADSA-H-13: Enforce Secure Remote Desktop Methods for Connections	Medium
+High	ADSA-H-12: Disable LAN Manager Hash Storage for Endpoints	Medium
+Informational	ADSA-I-01: Ensure Patches for Netlogon Elevation of Privilege Vulnerability, CVE-2020-1472 are applied to all Domain Controllers	Low
+Informational	ADSA-I-02: Restrict DHCPv6 Traffic on Endpoints	Medium
+Low	ADSA-L-06: Harden Microsoft Office Functionality	High
+Low	ADSA-L-08: Enhance Secure Channel Traffic and Digital Signing and Encryption of SMB Communications	High
+Low	ADSA-L-01: Review Scope of Dormant Accounts	Low
+Low	ADSA-L-02: Review Accounts with Permissions Inheritance Disabled	Low
+Low	ADSA-L-03: Review Computers That Were Created By Users	Low
+Low	ADSA-L-04: Review Unlinked Group Policy Objects	Low
+Low	ADSA-L-05: Enforce LSA Auditing	Low
+Low	ADSA-L-09: Disable the Link-Local Multicast Name Resolution (LLMNR) Protocol	Low
+Low	ADSA-L-07: Disable Auto-Update Functionality for Links Within Microsoft Office Documents	Medium
+Low	ADSA-L-10: Enhance Active Directory Backup and Restore Practices 	Medium
+Medium	ADSA-M-07: Endpoints on Windows Operating System Approaching End of Life (EOL) 	High
+Medium	ASDA-M-13: Implement and Leverage Privileged Access Workstations (PAWs) for Administrators	High
+Medium	ADSA-M-19: Disable PowerShell v2.0 and Enforce Hardened Script Execution Policies	High
+Medium	ADSA-M-20: Disable or Harden PowerShell Remoting and WinRM Services	High
+Medium	ADSA-M-18: Disable SMB v1.0	High
+Medium	ADSA-M-06: Review Mail Enabled Privileged Accounts	Low
+Medium	ADSA-M-15: Enhance Automated Group Policy Reprocessing Settings	Low
+Medium	ADSA-M-02: Consider the use of Honeypot Accounts to detect Kerberoasting	Low
+Medium	ADSA-M-10: Reduce Permissions for Adding Workstations to the Domain	Low
+Medium	ADSA-M-24: Segment Workstation-to-Workstation Communication with Windows Firewall	Low
+Medium	ADSA-M-25: Enable svchost.exe Mitigation Options	Low
+Medium	ADSA-M-01: Review and Mitigate Computer Accounts with the “Password Not Required” Attribute Set	Medium
+Medium	ADSA-M-03: Review Accounts Assigned the “AdminSDHolder” Role	Medium
+Medium	ADSA-M-04: Leverage the Protected Users Group for Privileged Accounts	Medium
+Medium	ADSA-M-09: Review Group Policies Where There Are No Permissions for Authenticated Users	Medium
+Medium	ADSA-M-14: Restrict WinRM from Storing RunAs Credentials	Medium
+Medium	ADSA-M-05: Develop a Process for Performing a KRBTGT Password Reset	Medium
+Medium	ADSA-M-08: Servers on End of Life (EOL) Windows Versions	Medium
+Medium	ADSA-M-11: Enhance Windows Logging Configurations	Medium
+Medium	ADSA-M-16: Enforce LDAP Signing for Clients	Medium
+Medium	ADSA-M-21: Restrict Anonymous Enumeration of SAM Accounts and Shares	Medium
+Medium	ADSA-M-23: Review Accounts and Groups with GPO Edit, Delete, and Link Permissions	Medium
+Medium	ADSA-M-27: Enforce Auditing for Scheduled Task Events	Medium
+Medium	ADSA-M-12: Enhance PowerShell, WinRM, and WMI Logging	Medium #>
 # ---------------------------------------------------------
 # Old Notes
 # ---------------------------------------------------------
