@@ -274,6 +274,9 @@ Get-Process | Export-Excel .\output.xlsx -WorksheetName Processes -ChartType Pie
 # Get all the PowerShell commands that start with "Get-AD*"
 (Find-Module -Name *-ad* -Repository PSGallery).Name | ForEach-Object {Get-Command -Module $_.Name} | Export-Csv -Path .\report_all-modules_with_-ad_in-name.csv -Encoding UTF8 
 
+# Get OU Details
+Get-ADOrganizationalUnit -Filter * -Property * | Export-Csv -Append -Path .\output_get-adorganizationunit_all-properties.csv -NoTypeInformation -Encoding utf8
+
 Get-ADComputerReport -Verbose *>&1 | Tee-Object -FilePath "output_Get-ADComputerReport_command_2022-04-25.txt"
 $ForestInfo = Get-ADForest -Current LocalComputer
 $DomainInfo = Get-ADDomain -Current LocalComputer
@@ -659,6 +662,12 @@ Get-NetFileServer
 
 ---
 ### GPO
+
+```powershell
+# Get All GPO's
+Get-GPO -All -Verbose | export-csv .\report_get-gpo_all_verbose.csv -Encoding utf8
+```
+
 - Get list of GPO in current domain
 ```powershell
 Get-NetGPO
