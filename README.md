@@ -357,8 +357,29 @@ Get-ADObject -IncludeDeletedObjects -LdapFilter "(&(objectClass=user))" | select
 
 # ADComputer
 Get-ADComputerReport -Verbose *>&1 | Tee-Object -FilePath "output_Get-ADComputerReport_command_2022-04-25.txt"
-# "CimSession"
+
+# "CimSession" and "CimInstance"
+[PowerShell]::Create().AddCommand("Get-CimInstance").AddArgument("Win32_BIOS").Invoke()
 Get-CimInstance -CimSession "localhost" -ClassName Win32_ComputerSystem -Property *
+# Network Info
+Get-CimInstance -ComputerName "localhost" -ClassName Win32_NetworkAdapterConfiguration -Filter "IPEnabled = 'True'" | Select-Object -Property *
+# Network Info - "IPAddress" only
+(Get-CimInstance -ComputerName "localhost" -ClassName Win32_NetworkAdapterConfiguration -Filter "IPEnabled = 'True'" | Select-Object -Property *).IPAddress[0]
+# "logicaldisk" - Space
+[Math]::Round(((Get-CimInstance win32_logicaldisk -Filter "name = 'c:'").FreeSpace / 1GB),1)
+# Retrieve process information from remote system (with WMI remoting enabled)
+Get-CimInstance -CimSession "localhost" -ClassName win32_process
+# Retrieve service names and statuses
+$session = New-CimSession -ComputerName "localhost"
+$session = New-CimSession -Credential <USERNAME>\<PASSWORD> -ComputerName "localhost"
+Get-CimInstance -CimSession $session -ClassName win32_service -Property name, state | sort state | ft name, state -AutoSize -HideTableHeaders -Wrap
+# Retrieve BIOS information
+Invoke-Command -ComputerName "localhost" -ScriptBlock {Get-CimInstance win32_bios}
+
+# "PSSession"
+$PSSession = New-PSSession -ComputerName "localhost"
+$PSSession = New-PSSession -Credential <USERNAME>\<PASSWORD> -ComputerName "localhost"
+Invoke-Command -Session $PSSession -ScriptBlock {gwmi win32_bios} -AsJob
 ```
 
 ---------------------------------------------------------
