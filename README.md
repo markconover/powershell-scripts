@@ -11,6 +11,7 @@
     * [Install Module](#install-module)
     * [Install Script](#install-script)
     * [git - Update all local repos](#git-update-all-local-repos)
+  * [PowerShell Configuration](#powershell-configuration)
   + [General](#general)
   * [Modules](#modules)
   * [Scripts](#scripts)
@@ -64,13 +65,31 @@ TA0040 | Impact | The adversary is trying to manipulate, interrupt, or destroy y
 TA0042 | Resource Development | The adversary is trying to establish resources they can use to support operations. |
 TA0043 | Reconnaissance | The adversary is trying to gather information they can use to plan future operations. |
 
-## 🎈 Commands <a name = "commands"></a>
 ------------------------------------
 ## Help Command <a name = "help-command"></a>
 ```powershell
+# Show the help for parameter "ComputerName"
 Get-Help * -Parameter ComputerName
 Update-Help -Force -Verbose
 Save-Help -DestinationPath "<DESTINATION_PATH>" -Force -Verbose
+
+# Show the help for install module, list the PS Get version to understand the paths for scope
+Get-Help Install-Module
+$env:PsModulePath -Split ";"
+Get-Module PowerShellGet -ListAvailable
+
+# Troubleshooting
+
+# Force PowerShell to use a more secure protocol, like TLS 1.2
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+# Output the secure protocols that will be used
+[Net.ServicePointManager]::SecurityProtocol
+
+# Re-registering PS default repository
+Unregister-PSRepository -Name PSGallery
+Register-PSRepository -Default
+Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+Find-Module ActiveDirectory -Verbose
 ```
 ---------------------------------------------------------
 ## Install PowerShell and other packages <a name = "install-powershell-and-other-packages"></a>
@@ -116,7 +135,6 @@ choco install version -y --force
 choco install which -y --force
 choco install zenmap -y --force
 ```
-
 ### Install pip <a name = "install-pip"></a>
 ```powershell
 py -m pip install --upgrade pip --force
@@ -159,7 +177,6 @@ pip install which
 pip install xlsxwriter
 pip install zenmap
 ```
-
 ### Install Module <a name = "install-module"></a>
 ```powershell
 Install-Module -Name PowerShellGet -Force -Verbose
@@ -169,8 +186,15 @@ Install-Module pester -SkipPublisherCheck -Force -Verbose
 Install-Module -Name ActiveDirectoryTools -Force -Verbose
 Update-Module -Verbose
 Get-Module -ListAvailable -All
-```
 
+# Troubleshooting
+# Re-registering PS default repository
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+Unregister-PSRepository -Name PSGallery
+Register-PSRepository -Default
+Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+Find-Module ActiveDirectory -Verbose
+```
 ### Install Script <a name = "install-script"></a>
 ```powershell
 Install-Script -Name CertificateScanner
@@ -181,12 +205,38 @@ Install-Script -Name PSGalleryInfo
 Install-Script -Name PSGalleryModule
 Install-Script -Name set-nsssl
 ```
-
 ### git - Update all local repos <a name = "git-update-all-local-repos"></a>
 ```powershell
 cd <GITHUB-PROJECTS-FOLDER-PATH>
 
 Get-ChildItem -Path "C:\github-projects" | foreach {git -C $_.FullName pull --force --all --recurse-submodules --verbose}
+```
+--------------------------------------------------------------------------------------------
+## PowerShell Configuration
+```powershell
+# Force PowerShell to use a more secure protocol, like TLS 1.2
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+# Output the secure protocols that will be used
+[Net.ServicePointManager]::SecurityProtocol
+
+# Example of how to set "PSModulePath"
+$Env:PSModulePath = $Env:PSModulePath + ";C:\Program Files\PowerShell\Modules;c:\program files\powershell\7\Modules;C:\Program Files\WindowsPowerShell\Modules;C:\windows\system32\WindowsPowerShell\v1.0\Modules;C:\Program Files (x86)\Universal\Modules"
+
+# Output PowerShell Module folder paths
+$env:PSModulePath -split ';'
+
+# Get PowerShell "profile.ps1" file locations
+$PROFILE | Get-Member -Type NoteProperty
+
+# Update PowerShell help files to your local system
+Get-Help * -Parameter ComputerName
+Update-Help -Force -Verbose
+Save-Help -DestinationPath "<DESTINATION_PATH>" -Force -Verbose
+
+# Show the help for install module, list the PS Get version to understand the paths for scope
+Get-Help Install-Module
+$env:PsModulePath -Split ";"
+Get-Module PowerShellGet -ListAvailable
 ```
 --------------------------------------------------------------------------------------------
 ## General
@@ -196,6 +246,16 @@ Get-ChildItem -Path "C:\github-projects" | foreach {git -C $_.FullName pull --fo
 ---------------------------------------
 ## Modules
 ```powershell
+# List modules loaded in to this current PowerShell session
+Get-Module
+
+# List modules that are available for use on this computer 
+Get-Module -ListAvailable
+
+# Do a Get-Module to see the ExportedCommands property to identify what commands are in a module
+# Call the ExportedCommands property so it formats nicely
+(Get-Module ActiveDirectory).ExportedCommands
+
 Find-Module *install*
 Find-Module -Repository PSGallery
 Find-Module -Name *pip*
