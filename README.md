@@ -186,7 +186,7 @@ Install-Script -Name set-nsssl
 ```powershell
 cd <GITHUB-PROJECTS-FOLDER-PATH>
 
-Get-ChildItem -Path "E:\Exclusions\github-projects" | foreach {git -C $_.FullName pull --force --all --recurse-submodules --verbose}
+Get-ChildItem -Path "C:\github-projects" | foreach {git -C $_.FullName pull --force --all --recurse-submodules --verbose}
 ```
 --------------------------------------------------------------------------------------------
 ## General
@@ -271,16 +271,8 @@ Get-Process | Export-Excel .\output.xlsx -WorksheetName Processes -ChartType Pie
 ---------------------------------------------------------
 ## Active Directory
 ```powershell
-# Get all the PowerShell commands that start with "Get-AD*"
-(Find-Module -Name *-ad* -Repository PSGallery).Name | ForEach-Object {Get-Command -Module $_.Name} | Export-Csv -Path .\report_all-modules_with_-ad_in-name.csv -Encoding UTF8 
 
-# Get OU Details
-Get-ADOrganizationalUnit -Filter * -Property * | Export-Csv -Append -Path .\output_get-adorganizationunit_all-properties.csv -NoTypeInformation -Encoding utf8
-
-Get-ADComputerReport -Verbose *>&1 | Tee-Object -FilePath "output_Get-ADComputerReport_command_2022-04-25.txt"
-$ForestInfo = Get-ADForest -Current LocalComputer
-$DomainInfo = Get-ADDomain -Current LocalComputer
-Show-DomainTree
+# Import "ActiveDirectory" Module
 try {
     Import-Module ActiveDirectory -ErrorAction Stop
 } catch {
@@ -293,10 +285,29 @@ try {
     Write-Host "Unable to import module GroupPolicy! Ensure it is available on this system." -BackgroundColor Yellow -ForegroundColor Black
     Break
 }
-$ForestInfo = Get-ADForest -Current LocalComputer
-$DomainInfo = Get-ADDomain -Current LocalComputer
-$DCs = Get-ADDomainController -Filter {ISReadOnly -eq $True} -ErrorVariable ErrVar -ErrorAction SilentlyContinue | Select-Object $Properties
 
+# Get all the PowerShell commands that start with "Get-AD*"
+(Find-Module -Name *-ad* -Repository PSGallery).Name | ForEach-Object {Get-Command -Module $_.Name} | Export-Csv -Path .\report_all-modules_with_-ad_in-name.csv -Encoding UTF8 
+Get-Command -Type All | Select-Object Source  | grep -i "get-ad"
+
+# Forest
+$ForestInfo = Get-ADForest -Current LocalComputer
+Get-ADForest | Format-Table -Property *master*, global*, Domains
+Get-ADForest google.com | Format-Table SchemaMaster,DomainNamingMaster
+
+# Site
+Get-ADObject -SearchBase (Get-ADRootDSE).ConfigurationNamingContext -filter "objectclass -eq 'site'"
+
+# Get OU Details
+Get-ADOrganizationalUnit -Filter * -Property * | Export-Csv -Append -Path .\output_get-adorganizationunit_all-properties.csv -NoTypeInformation -Encoding utf8
+Get-ADOrganizationalUnit -Filter "Name –eq 'HR'")
+Get-ADOrganizationalUnit -LDAPFilter "(name=Google)" -Property * | select distinguishedname
+
+# Domain
+$DomainInfo = Get-ADDomain -Current LocalComputer
+Show-DomainTree -Verbose
+Get-ADDomain | Format-Table -Property DNS*, PDC*, *master, Replica*
+Get-ADDomain google.com | format-table PDCEmulator,RIDMaster,InfrastructureMaster
 $SearchBase = $DomainInfo.DistinguishedName
 Add-Content -Path $LogFile -Value "Domain FQDN: $($DomainInfo.DNSRoot)"
 Add-Content -Path $LogFile -Value "Domain NetBIOS: $($DomainInfo.NetBIOSName)"
@@ -321,17 +332,49 @@ $ChildDomainStatus = foreach ($child in $DomainInfo.ChildDomains){
     }
 }
 
-Get-ADBranch -SearchBase "dc=<COMPANY-NAME>,dc=com" | Format-List -Property name
+# Domain Controllers
+$DCs = Get-ADDomainController -Filter {ISReadOnly -eq $True} -ErrorVariable ErrVar -ErrorAction SilentlyContinue | Select-Object $Properties
+Get-ADDomainController
+Get-ADDomainController -Discover -Service PrimaryDC
+Get-ADObject -LDAPFilter "(objectclass=computer)" -searchbase "ou=domain controllers,dc=google,dc=com"
 
-Show-DomainTree -Verbose
+# AD Branch
+Get-ADBranch -SearchBase "dc=<COMPANY-NAME>,dc=com" | Format-List -Property Name
 
-Get-Command -Type All | Select-Object Source  | grep -i "get-ad"
+# ADGroup
+Get-ADGroup -Filter { Name -like "*admin*" }
+Get-ADGroup -Filter { Name -like "*Management*" }
+
+# ADGroupMember
+# Display Group Members of the HR Team Group
+Get-ADGroupMember -Identity 'HR Team' | Format-Table -Property SamAccountName, DistinguishedName
+
+# ADUser
+# Identify objects in the Active Directory (AD) Recycle Bin
+# Active Directory Recycle Bin (since Windows Server 2008 R2 OS, for recovering deleted objects)
+Get-ADObject -IncludeDeletedObjects -LdapFilter "(&(objectClass=user))"
+Get-ADObject -IncludeDeletedObjects -LdapFilter "(&(objectClass=user))" | select Name
+
+# ADComputer
+Get-ADComputerReport -Verbose *>&1 | Tee-Object -FilePath "output_Get-ADComputerReport_command_2022-04-25.txt"
+# "CimSession"
+Get-CimInstance -CimSession "localhost" -ClassName Win32_ComputerSystem -Property *
 ```
 
 ---------------------------------------------------------
 ## Computer Info
 ```powershell
 $servers = Get-ADComputer -Filter * -Properties *
+
+# "Get-ADComputer" (with limited property value output)
+Get-ADComputer -Filter * -Property 'Name','DistinguishedName','OperatingSystem','OperatingSystemServicePack','OperatingSystemVersion','IPv4Address','whenCreated','whenChanged','PasswordLastSet','userAccountControl' -ErrorVariable ErrVar -ErrorAction SilentlyContinue | Export-Csv -path OutFile.CSV -NoTypeInformation -Encoding utf8
+
+# "Get-ADComputer" (with limited property value output, alternative)
+Get-ADComputer -Filter * -Property Name,DNSHostName,Enabled,isCriticalSystemObject,ManagedBy,DisplayName,DistinguishedName,CanonicalName,ObjectCategory,ObjectClass,ObjectSID,OperatingSystem,OperatingSystemServicePack,OperatingSystemVersion,IPv4Address,Description,DisplayName,whenCreated,whenChanged,PasswordLastSet,userAccountControl,MemberOf,PrimaryGroup,adminCount -ErrorVariable ErrVar -ErrorAction SilentlyContinue | Export-Csv -Path OutFile.CSV -NoTypeInformation -Encoding utf8
+
+# Alternative Way
+Get-ADObject -LDAPFilter "(objectclass=computer)" -searchbase "dc=google,dc=com" -Verbose -Property * | Export-Csv -Path .\report_get-adobject_of-type-computer_from_google-com-domain_all-computers.csv -Encoding utf8
+
 Get-ADComputer -Identity "<HOSTNAME>" -Properties * -Verbose
 Get-ComputerInfo -Property "*version"
 Write-Host $env:COMPUTERNAME
