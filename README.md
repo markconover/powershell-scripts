@@ -285,6 +285,8 @@ Install-Script -Name set-nsssl
 (Get-Command *).Name | Sort -Unique
 # Get all command names locally installed (that start with "Get-AD")
 (Get-Command *).Name | Sort -Unique | grep -i get\-ad
+# Get all commands that deal with files
+Get-Command -Noun File*
 # Get cmdlets and functions that have an output type
 Get-Command -Type Cmdlet | Where-Object OutputType | Format-List -Property Name, OutputType
 Get-Command -Module PowerShellGet | Format-Wide -Column 3
