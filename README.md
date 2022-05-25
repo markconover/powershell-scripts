@@ -331,17 +331,24 @@ try {
 # Get all the PowerShell commands that start with "Get-AD*"
 (Find-Module -Name *-ad* -Repository PSGallery).Name | ForEach-Object {Get-Command -Module $_.Name} | Export-Csv -Path .\report_all-modules_with_-ad_in-name.csv -Encoding UTF8 
 Get-Command -Type All | Select-Object Source  | grep -i "get-ad"
+# Trust
+Get-ADTrust -Filter * -Property * | Export-Csv ad-trust-list_active-directory-details_2022-05-25.csv -NoTypeInformation -Encoding utf8
 # Forest
+Get-ADForest | Export-Csv ad-forest-list_active-directory-details_2022-05-25.csv -NoTypeInformation -Encoding utf8
 $ForestInfo = Get-ADForest -Current LocalComputer
 Get-ADForest | Format-Table -Property *master*, global*, Domains
 Get-ADForest google.com | Format-Table SchemaMaster,DomainNamingMaster
 # Site
+Get-ADSiteDetail | Export-Csv .\ad-site-detail_active-directory-details_2022-05-25.xlsx -NoTypeInformation -Encoding utf8
+Get-ADSiteSummary | Export-Csv .\ad-site-summary_active-directory-details_2022-05-25.xlsx -NoTypeInformation -Encoding utf8
 Get-ADObject -SearchBase (Get-ADRootDSE).ConfigurationNamingContext -filter "objectclass -eq 'site'"
 # Get OU Details
+Get-ADOrganizationalUnit -Filter * -Property * | Export-Csv ad-org-unit-list_active-directory-details_2022-05-25.csv -NoTypeInformation -Encoding utf8
 Get-ADOrganizationalUnit -Filter * -Property * | Export-Csv -Append -Path .\output_get-adorganizationunit_all-properties.csv -NoTypeInformation -Encoding utf8
 Get-ADOrganizationalUnit -Filter "Name –eq 'HR'")
 Get-ADOrganizationalUnit -LDAPFilter "(name=Google)" -Property * | select distinguishedname
 # Domain
+Get-ADDomain | Export-Csv ad-domain-list_active-directory-details_2022-05-25.csv -NoTypeInformation -Encoding utf8
 $DomainInfo = Get-ADDomain -Current LocalComputer
 Show-DomainTree -Verbose
 Get-ADDomain | Format-Table -Property DNS*, PDC*, *master, Replica*
@@ -370,13 +377,16 @@ $ChildDomainStatus = foreach ($child in $DomainInfo.ChildDomains){
     }
 }
 # Domain Controllers
+Get-ADDomainController -Filter * | Export-Csv ad-domain-controller-list_active-directory-details_2022-05-25.csv -NoTypeInformation -Encoding utf8
+# Domain Controllers - Read-Only
 $DCs = Get-ADDomainController -Filter {ISReadOnly -eq $True} -ErrorVariable ErrVar -ErrorAction SilentlyContinue | Select-Object $Properties
-Get-ADDomainController
 Get-ADDomainController -Discover -Service PrimaryDC
 Get-ADObject -LDAPFilter "(objectclass=computer)" -searchbase "ou=domain controllers,dc=google,dc=com"
 # ADBranch
 Get-ADBranch -SearchBase "dc=<COMPANY-NAME>,dc=com" | Format-List -Property Name
 # ADGroup
+Get-ADGroup -Filter * -Property * | Export-Csv ad-group-list_active-directory-details_2022-05-25.csv -NoTypeInformation -Encoding utf8
+Get-ADGroupReport -Verbose | Export-Csv ad-group-report_active-directory-details_2022-05-25.csv -NoTypeInformation -Encoding utf8
 Get-ADGroup -Filter { Name -like "*admin*" }
 Get-ADGroup -Filter { Name -like "*Management*" }
 # ADGroupMember
@@ -385,7 +395,7 @@ Get-ADGroupMember -Identity 'HR Team' | Format-Table -Property SamAccountName, D
 # ADUser
 # "Get-ADUser"
 # Get all ADUsers
-Get-ADUser -Filter * -Properties *
+Get-ADUser -Filter * -Property * | Export-Csv ad-user-list_active-directory-details_2022-05-25.csv -NoTypeInformation -Encoding utf8
 # Get ADUser by Name
 Get-ADUser -Filter 'Name -like "*John*Smith*"' -Properties * | Format-List -Property *
 Get-ADUser -Identity student1 -Properties *
@@ -402,6 +412,7 @@ Get-ADUser -Filter * -Properties * | select name,@{expression={[datetime]::fromF
 Get-ADObject -IncludeDeletedObjects -LdapFilter "(&(objectClass=user))"
 Get-ADObject -IncludeDeletedObjects -LdapFilter "(&(objectClass=user))" | select Name
 # ADComputer
+Get-ADComputer -Filter * -Property * | Export-Csv ad-computer-list_active-directory-details_2022-05-25.csv -NoTypeInformation -Encoding utf8
 Get-ADComputerReport -Verbose *>&1 | Tee-Object -FilePath "output_Get-ADComputerReport_command_2022-04-25.txt"
 # "CimSession" and "CimInstance"
 [PowerShell]::Create().AddCommand("Get-CimInstance").AddArgument("Win32_BIOS").Invoke()
@@ -468,6 +479,8 @@ Get-ChildItem -Path registry::HKEY_CURRENT_CONFIG\System\CurrentControlSet\SERVI
 ### Files
 ```powershell
 Get-ChildItem -Path C:\ -Filter *.sys -Force
+# Unblock files (to allow script files to be ran in PowerShell terminal)
+Get-ChildItem -Recurse | Unblock-File
 ```
 ### netstat
 ```powershell
