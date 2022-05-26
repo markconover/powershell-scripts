@@ -742,12 +742,16 @@ Get-ADBranch -SearchBase "dc=<COMPANY-NAME>,dc=com" | Format-List -Property Name
 Get-ADBranch -SearchBase "dc=<COMPANY-NAME>,dc=com" | Export-Csv ad-branch-list_active-directory-details_2022-05-25.csv -NoTypeInformation -Encoding utf8
 # ADGroup
 Get-ADGroup -Filter * -Property * | Export-Csv ad-group-list_active-directory-details_2022-05-25.csv -NoTypeInformation -Encoding utf8
-Get-ADGroupReport -Verbose | Export-Csv ad-group-report_active-directory-details_2022-05-25.csv -NoTypeInformation -Encoding utf8
+Get-ADGroupReport -Scope Any -Verbose | Export-Csv .\output_get-adgroupreport_2022-05-26.csv -NoTypeInformation -Encoding utf8
 Get-ADGroup -Filter { Name -like "*admin*" }
 Get-ADGroup -Filter { Name -like "*Management*" }
 # ADGroupMember
+# Display Group Members of the "Domain Admins" group
+get-adgroupmember "Domain Admins" -recursive -Verbose | Export-Csv .\output_get-adgroupmember_2022-05-26.csv -NoTypeInformation -Encoding utf8
 # Display Group Members of the HR Team Group
 Get-ADGroupMember -Identity 'HR Team' | Format-Table -Property SamAccountName, DistinguishedName
+# ADGroupMemberObjects
+Get-ADGroupMemberObjects -GroupNTAccount 'Google\Admin Staff' -Verbose | ForEach-Object {Get-ADUser $_.NTAccount.Split("\")[1] -Property * -Verbose} | Export-Csv .\output_get-adgroupmemberobjects_2022-05-26.csv -NoTypeInformation -Encoding utf8
 # ADUser
 # "Get-ADUser"
 # Get all ADUsers
@@ -765,6 +769,7 @@ Get-ADUser -Filter * -Properties * | select -First 1 | Get-Member -MemberType *P
 Get-ADUser -Filter * -Properties * | select name,@{expression={[datetime]::fromFileTime($_.pwdlastset)}}
 # ADObject
 Get-ADObject -Filter * -Verbose | Export-Csv .\ADObjects.csv -NoTypeInformation -Encoding utf8
+Get-ADObject -LDAPFilter "(ObjectClass=GroupPolicyContainer)" -Property * -Verbose | Export-Csv .\output_get-adobject_ldapfilter_objectclass_grouppolicycontainer_2022-05-26.csv -NoTypeInformation -Encoding utf8
 # Identify objects in the Active Directory (AD) Recycle Bin
 # Active Directory Recycle Bin (since Windows Server 2008 R2 OS, for recovering deleted objects)
 Get-ADObject -IncludeDeletedObjects -LdapFilter "(&(objectClass=user))"
