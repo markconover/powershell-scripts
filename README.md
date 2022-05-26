@@ -94,30 +94,160 @@ notepad++ (Get-PSReadLineOption | select -ExpandProperty HistorySavePath)
 ### Install Chocolatey <a name = "install-chocolatey"></a>
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+choco install *git* -y --force --verbose
+choco install -y anaconda3 
+choco install -y aria2
+choco install -y bloomrpc
+choco install -y cascadiacode
+choco install -y cascadiacodepl
+choco install -y checksum
+choco install -y conemu
+choco install -y dbeaver
+choco install -y ditto
+choco install -y docker
+choco install -y docker-desktop
+choco install -y ffmpeg
+choco install -y firacode 
+choco install -y gitextensions
+choco install -y jq
+choco install -y kdiff3
+choco install -y nodejs
+choco install -y postman
+choco install -y powershell-preview
+choco install -y rufus
+choco install -y sbt
+choco install -y selenium
+choco install -y selenium4
+choco install -y sharex
+choco install -y sql-server-management-studio
+choco install -y sysinternals
+choco install -y teracopy
+choco install -y ussf
+choco install -y wget
+choco install accesschk -y --force --verbose
+choco install ad* -y --force --verbose
+choco install adexplorer -y --force --verbose
+choco install adrecon -y --force --verbose
+choco install adreports -y --force --verbose
 choco install advanced-ip-scanner -y --force
+choco install advanced-ip-scanner -y --force --verbose
+choco install advanced-port-scanner -y --force --verbose
+choco install advanced-renamer.install -y --force --verbose
+choco install altools -y --force --verbose
+choco install angryip -y
 choco install angryip -y --force
+choco install assoc -y --force --verbose
+choco install awk -y
+choco install aws -y
+choco install aws-cli -y
+choco install aws-sdk -y
+choco install awscli -y
+choco install AWSTools -y
+choco install AWSTools.PowerShell -y
+choco install azure-cli -y --force --verbose
+choco install bloodhound -y --force --verbose
+choco install brew -y --force --verbose
+choco install build-tools -y --force --verbose
+choco install buildtools -y --force --verbose
+choco install bulkrenameutility -y --force
+choco install certutil -y --force
+choco install cmake -y
+choco install cmder -y
 choco install curl -y --force
+choco install diff -y
 choco install diff -y --force
+choco install diskdump -y
+choco install dsc.computermanagement --verbose
+choco install find -y
+choco install freerdp -y 
 choco install grep -y --force
+choco install grep -y --verbose --force
+choco install grep3 -y
+choco install gwmi -y
+choco install ip-query -y
 choco install ip-query -y --force
+choco install jupyter-powershell -y
 choco install jupyter-powershell -y --force
 choco install lansweeper -y --force
+choco install laps -y
+choco install man -y
 choco install man -y --force
+choco install microsoft-build-tools -y
+choco install nbrew -y
+choco install ndiff -y
 choco install ndiff -y --force
+choco install neo4j -y
+choco install neo4j-community -y --force --verbose
+choco install network-miner -y --ignore-checksums
 choco install nmap -y --force
+choco install nmap -y --force --verbose
+choco install nuget -y
+choco install NugetPackageManager -y
+choco install od -y
+choco install oh-my-posh -y
 choco install oh-my-posh -y --force
+choco install openssh -params '"/SSHServerFeature /KeyBasedAuthenticationFeature"' -y
+choco install openssh -params '"/SSHServerFeature /KeyBasedAuthenticationFeature"' -y --force --verbose
+choco install openssh -params '"/SSHServerFeature /KeyBasedAuthenticationFeature"' y
+choco install openssh -y --force --verbose
 choco install openssl -y --force
+choco install openssl -y --force --verbose
+choco install pip -y
 choco install pip -y --force
+choco install pip3 -y
+choco install pip_search
 choco install pip_search -y --force
+choco install poshadmin -y
+choco install poshgit --force
 choco install poshgit -y --force
+choco install poshhosts -y
+choco install powertoys -y
+choco install procdot -y
+choco install procdump -y
+choco install psgit -y
+choco install pslist -y
 choco install pslist -y --force
+choco install psreadline -y
 choco install psreadline -y --force
 choco install python2 -y --force
 choco install python3 -y --force
+choco install pywin32 --force
+choco install renamer -y
+CHOCO INSTALL RSAT -y
+choco install search -y
+choco install sed -y
+choco install speccy -y
+choco install sqlitebrowser -y
 choco install sysinternals -y --force
+choco install sysinternals -y --force --verbose
+choco install sysmon -y
+choco install tcpdump -y
+choco install version -y
 choco install version -y --force
+choco install visualcpp-build-tools -y
+choco install vmware-tools -y 
+choco install wget -y
+choco install what -y
+choco install where -y
+choco install whereis -y
+choco install which -y
 choco install which -y --force
+choco install win32diskimager -y 
+choco install windbg -y
+choco install windows-iso-downloader -y 
+choco install windows-repair-toolbox -y
+choco install windowsisodownloader -y 
+choco install windump -y
+choco install winget -y
+choco install winimage -y 
+choco install winpcap -y
+choco install winscp -y
+choco install wireshark -y
+choco install zbrew -y
 choco install zenmap -y --force
+choco install zenmap -y --ignore-checksums
+choco search neo4j | choco install -y --force --verbose
+help choco install | grep -i source
 ```
 ### Install pip <a name = "install-pip"></a>
 ```powershell
