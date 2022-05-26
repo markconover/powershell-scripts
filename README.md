@@ -687,9 +687,16 @@ try {
 (Find-Module -Name *-ad* -Repository PSGallery).Name | ForEach-Object {Get-Command -Module $_.Name} | Export-Csv -Path .\report_all-modules_with_-ad_in-name.csv -Encoding UTF8 
 Get-Command -Type All | Select-Object Source  | grep -i "get-ad"
 # Trust
+# Get the list of all trusts within the current domain
 Get-ADTrust -Filter * -Property * | Export-Csv ad-trust-list_active-directory-details_2022-05-25.csv -NoTypeInformation -Encoding utf8
+# Get the list of all trusts within the indicated domain
+Get-ADTrust -Identity us.domain.corporation.local  
 # Forest
 Get-ADForest | Export-Csv ad-forest-list_active-directory-details_2022-05-25.csv -NoTypeInformation -Encoding utf8
+# Get all domains in the current forest
+(Get-ADForest).Domains                                                                                   
+# Map only external trusts
+(Get-ADForest).Domains | %{Get-ADTrust -Filter '(intraForest -ne $True) -and (ForestTransitive -ne $True)' -Server $_}
 $ForestInfo = Get-ADForest -Current LocalComputer
 Get-ADForest | Format-Table -Property *master*, global*, Domains
 Get-ADForest google.com | Format-Table SchemaMaster,DomainNamingMaster
@@ -741,21 +748,35 @@ Get-ADObject -LDAPFilter "(objectclass=computer)" -searchbase "ou=domain control
 Get-ADBranch -SearchBase "dc=<COMPANY-NAME>,dc=com" | Format-List -Property Name
 Get-ADBranch -SearchBase "dc=<COMPANY-NAME>,dc=com" | Export-Csv ad-branch-list_active-directory-details_2022-05-25.csv -NoTypeInformation -Encoding utf8
 # ADGroup
+# Get all groups that contain the word "admin" in the group name
+Get-ADGroup -Filter 'Name -like "*admin*"' | select Name
 Get-ADGroup -Filter * -Property * | Export-Csv ad-group-list_active-directory-details_2022-05-25.csv -NoTypeInformation -Encoding utf8
 Get-ADGroupReport -Scope Any -Verbose | Export-Csv .\output_get-adgroupreport_2022-05-26.csv -NoTypeInformation -Encoding utf8
 Get-ADGroup -Filter { Name -like "*admin*" }
 Get-ADGroup -Filter { Name -like "*Management*" }
 # ADGroupMember
-# Display Group Members of the "Domain Admins" group
+# Get all members of the "Domain Admins" group
 get-adgroupmember "Domain Admins" -recursive -Verbose | Export-Csv .\output_get-adgroupmember_2022-05-26.csv -NoTypeInformation -Encoding utf8
 # Display Group Members of the HR Team Group
 Get-ADGroupMember -Identity 'HR Team' | Format-Table -Property SamAccountName, DistinguishedName
 # ADGroupMemberObjects
 Get-ADGroupMemberObjects -GroupNTAccount 'Google\Admin Staff' -Verbose | ForEach-Object {Get-ADUser $_.NTAccount.Split("\")[1] -Property * -Verbose} | Export-Csv .\output_get-adgroupmemberobjects_2022-05-26.csv -NoTypeInformation -Encoding utf8
+# ADPrincipalGroupMembership
+# Get group membership for "user01"
+Get-ADPrincipalGroupMembership -Identity user01 
 # ADUser
 # "Get-ADUser"
 # Get all ADUsers
 Get-ADUser -Filter * -Property * | Export-Csv ad-user-list_active-directory-details_2022-05-25.csv -NoTypeInformation -Encoding utf8
+# Find user accounts used as Service accounts
+Get-ADUser -Filter {ServicePrincipalName -ne "$null"} -Properties ServicePrincipalName
+# Search for domain computers with unconstrained delegation enabled
+Get-ADComputer -Filter {TrustedForDelegation -eq $True}
+Get-ADUser -Filter {TrustedForDelegation -eq $True}
+# Enumerating accounts with Kerberos Preauth disabled
+Get-ADUser -Filter {DoesNotRequirePreAuth -eq $True} -Properties DoesNotRequirePreAuth
+# Check if user01 already has a SPN
+Get-ADUser -Identity User01 -Properties serviceprincipalname | select serviceprincipalname
 # Get ADUser by Name
 Get-ADUser -Filter 'Name -like "*John*Smith*"' -Properties * | Format-List -Property *
 Get-ADUser -Identity student1 -Properties *
@@ -769,14 +790,21 @@ Get-ADUser -Filter * -Properties * | select -First 1 | Get-Member -MemberType *P
 Get-ADUser -Filter * -Properties * | select name,@{expression={[datetime]::fromFileTime($_.pwdlastset)}}
 # ADObject
 Get-ADObject -Filter * -Verbose | Export-Csv .\ADObjects.csv -NoTypeInformation -Encoding utf8
+# Returns all printers in the current (or specified) domain.
+Get-ADObject -LDAPFilter '(objectCategory=printQueue)' -Properties driverName,driverVersion,Name,portName,printShareName,serverName,url,whenChanged,whenCreated -Verbose | Export-Csv .\output_get-adobject_ldapfilter_find-printers_2022-05-26.csv -NoTypeInformation -Encoding utf8
 Get-ADObject -LDAPFilter "(ObjectClass=GroupPolicyContainer)" -Property * -Verbose | Export-Csv .\output_get-adobject_ldapfilter_objectclass_grouppolicycontainer_2022-05-26.csv -NoTypeInformation -Encoding utf8
 # Identify objects in the Active Directory (AD) Recycle Bin
 # Active Directory Recycle Bin (since Windows Server 2008 R2 OS, for recovering deleted objects)
 Get-ADObject -IncludeDeletedObjects -LdapFilter "(&(objectClass=user))"
 Get-ADObject -IncludeDeletedObjects -LdapFilter "(&(objectClass=user))" | select Name
+# Enumeration users and computers with constrained delegation enabled
+Get-ADObject -Filter {msDS-AllowedToDelegateTo -ne "$null"} -Properties msDS-AllowedToDelegateTo
 # ADComputer
 Get-ADComputer -Filter * -Property * | Export-Csv ad-computer-list_active-directory-details_2022-05-25.csv -NoTypeInformation -Encoding utf8
 Get-ADComputerReport -Verbose *>&1 | Tee-Object -FilePath "output_Get-ADComputerReport_command_2022-04-25.txt"
+# Search for domain computers with unconstrained delegation enabled
+Get-ADComputer -Filter {TrustedForDelegation -eq $True}
+Get-ADUser -Filter {TrustedForDelegation -eq $True}
 # "CimSession" and "CimInstance"
 [PowerShell]::Create().AddCommand("Get-CimInstance").AddArgument("Win32_BIOS").Invoke()
 Get-CimInstance -CimSession "localhost" -ClassName Win32_ComputerSystem -Property *
