@@ -177,6 +177,231 @@ Unregister-PSRepository -Name PSGallery
 Register-PSRepository -Default
 Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
 Find-Module ActiveDirectory -Verbose
+# GitHub - Modules
+Install-Module psgithub -Force -Verbose
+Import-Module psgithub -Force -Verbose
+Get-Command -Module psgithub
+find-module *active*dir* | Install-Module -Force -Verbose
+find-module *active*directory* | Install-Module -Force -Verbose
+find-module *activedir* | install-module -Force -Verbose
+find-module *adenum* | Install-Module -Force -Verbose
+find-module *azuread* | Install-Module -Force -Verbose
+find-module *dns* | Install-Module -Force -Verbose
+Find-Module *Excel* | Install-Module -Force -Verbose
+find-module *hist* | Install-Module -Force -Verbose
+Find-Module *msol* | Install-Module -Force -Verbose
+Find-Module *office365* | Install-Module -Force -Verbose
+Find-Module *vm*cli* | Install-Module -Force -Verbose
+Find-Module -Name *qad* -Repository PSGallery | Install-Module -Force -Verbose
+Find-Module -Name *session* -Repository PSGallery | Install-Module -Force -Verbose
+Find-Module -Name *session* -Repository PSGallery | Sort-Object -Property Name | Format-Table -Property Name -HideTableHeaders | Install-Module *
+Find-Module -Name *session* -Repository PSGallery | Sort-Object -Property Name | Format-Table -Property Name -HideTableHeaders | Install-Module * -Force -Verbose
+Find-Module -Name *session* -Repository PSGallery | Sort-Object -Property Name | Format-Table -Property Name -HideTableHeaders | Install-Module -Force -Verbose | tee C:\Exclusions\temp\output_2022-04-13.txt
+Find-Module -Name *session* -Repository PSGallery | Sort-Object -Property Name | Format-Table -Property Name -HideTableHeaders | Install-Module -Force -Verbose | tee C:\Exclusions\temp\output_2022-04-13.txt
+Find-Module -Name *session* -Repository PSGallery | Sort-Object -Property Name | Format-Table -Property Name -HideTableHeaders | Install-Module -Force -Verbose| tee C:\Exclusions\temp\output_2022-04-13.txt
+Find-Module -Name CertificateDsc -Repository PSGallery | Install-Module -Force -Verbose
+Find-Module -Name Pester | Install-Module -Force -Verbose
+Find-Module -Name PowerShellGet | Install-Module -Force -Verbose
+find-module active*dir* | Install-Module -Force -Verbose
+Find-Module nx* | Install-Module -Force -Verbose
+Find-Module vmware.* | Install-Module -Force -Verbose
+Install-Module -Name 'Az' -Force -Verbose
+Install-Module -Name 'PSWinReportingV2' -Force -Verbose
+Install-Module -Name *hostname* -Force -Verbose
+Install-Module -Name ActiveDirectory -Force -Verbose
+Install-Module -Name ActiveDirectoryCmdlets -Force -Verbose
+Install-Module -Name ActiveDirectoryDsc -Repository PSGallery -Force -Verbose -SkipPublisherCheck
+Install-Module -Name ActiveDirectoryDsc -Verbose -Force
+Install-Module -Name ActiveDirectoryTools -Force -Verbose
+Install-Module -Name ADAudit -Force -Verbose
+Install-Module -name ADReportingTools -Force -Verbose
+Install-Module -Name ARTools -Repository PSGallery -Force -Verbose
+Install-Module -Name AzureAD -Force -Verbose
+Install-Module -Name AzureADIncidentResponse -Force -Verbose
+Install-Module -Name Cim -Force -Verbose
+Install-Module -Name CimSession -Force -Verbose
+Install-Module -Name CimSweep -Force -Verbose
+Install-Module -Name ComputerManagementDsc -Repository PSGallery -Verbose -Force
+Install-Module -Name Convert-WindowsImage -Force -Verbose
+Install-Module -Name EnhancedHTML2 -Force -Verbose
+Install-Module -Name Env -Force -Verbose
+Install-Module -Name Find-SMBShare -Force -Verbose
+Install-Module -Name FreshBuild -Scope AllUsers -Force -Verbose
+Install-Module -Name Get-ADUserCertificate -Force -Verbose
+Install-Module -Name Get-ComputerSystem -Force -Verbose
+Install-Module -Name Get-IPGeolocation -Force -Verbose
+Install-Module -Name Get-RemoteCert -Force -Verbose
+Install-Module -Name Get-WebCertificate -Force -Verbose
+Install-Module -Name Get-WmiObject -Force -Verbose
+Install-Module -Name Microsoft.Online.SharePoint.PowerShell -Force -Verbose
+Install-Module -Name MSOnline -Force -Verbose
+Install-Module -Name NetworkingDSC -Force -Verbose
+Install-Module -Name NTFSSecurity -Force -Verbose
+Install-Module -Name NuGet -Force -Verbose
+Install-Module -Name OpenSSL -Force -Verbose
+Install-Module -Name Pester -Force -Verbose
+Install-Module -Name PnP.PowerShell -Force -Verbose
+Install-Module -Name PowerShell.X509Certificate.Utility -Force -Verbose
+Install-Module -Name PowerShellGet -Force -Verbose
+Install-Module -Name PowerShellGet -RequiredVersion 1.6.5 -Force -Verbose
+Install-Module -Name PowerUpSQL -Force -Verbose -AllowClobber
+Install-Module -Name PS.ActiveDirectoryTools -Force -Verbose
+Install-Module -Name Pscx -Force -Verbose
+Install-Module -Name PSFalcon -Scope CurrentUser -Verbose -Force
+Install-Module -Name PSGalleryModule -Force -Verbose
+Install-Module -Name PSPackageProject -Repository PSGallery -Force -Verbose
+Install-Module -Name PSSubnetScan -Force -Verbose
+Install-Module -Name PSWriteHTML -AllowClobber -Force -Verbose
+Install-Module -Name RDPCertificate -Force -Verbose
+Install-Module -Name S.DS.P -Force -Verbose
+Install-Module -Name SecurityPolicyDSC -Force -Verbose
+Install-Module -Name Test-ActiveDirectory -Force -Verbose
+Install-Module -Name Testimo -AllowClobber -Force -Verbose
+Install-Module -Name TlsCertificateValidation -Force -Verbose
+Install-Module -Name xPSDesiredStateConfiguration, xWebAdministration -Force -Verbose
+Install-Module -Name xSmbShare -Force -Verbose
+Install-Module 365tools -Force -Verbose
+Install-Module ActiveDirectory -Force -Verbose
+install-module activedirectorycmdlets -Force -Verbose
+install-module activedirectorydsc -Force -Verbose
+install-module activedirectorystig -Force -Verbose -AllowClobber
+install-module ad* -Force -Verbose
+Install-Module ADDSActiveAccountAudit -Force -Verbose
+Install-Module ADDSDeployment -Force -Verbose
+Install-Module adessentials -Force -Verbose
+Install-Module ADFSToolkit -Force -Verbose
+Install-Module adgraph -Force -Verbose
+Install-Module admanagement -Force -Verbose
+install-module ADManagement -Force -Verbose -AllowClobber
+Install-Module AdminToolbox -Allowclobber -Force -Verbose
+Install-Module AdminToolbox.EndpointManagement -Force -Verbose
+Install-Module admintoolbox.filemanagement -Force -Verbose
+install-module adsec -Force -Verbose
+install-module adtools -Force -Verbose
+install-module adusermanagement -Force -Verbose
+Install-Module advancedadmanagement -Force -Verbose
+Install-Module AutomatedLab -SkipPublisherCheck -AllowClobber -Force -Verbose
+Install-Module AWS -Force -Verbose
+Install-Module awspowershell -Force -Verbose
+Install-Module Az -Force -Verbose
+Install-Module AzureAD -Force -Verbose
+Install-Module AzureADAssessment -Force
+Install-Module AzureADAssessment -Force -Verbose
+Install-Module Backup, PSBackup, checkbackups, backuprepos -Force -Verbose
+Install-Module baseencoder -Force -Verbose
+Install-Module baseencoder -Force -Verbose -SkipPublisherCheck
+Install-Module CertUtil -Force -Verbose
+Install-Module computermanagement -Force -Verbose
+Install-Module computermanagement -Force -Verbose -allowclobber
+Install-Module ComputerManagementDsc -Force -Verbose
+install-module cwindowsservicedsc -Force -Verbose
+Install-Module dnsserverdsc -Force -Verbose
+Install-Module dotnet.tools -Force -Verbose
+Install-Module ExcelCmdlets -Force -Verbose
+install-module find-gitrepository -Force -Verbose
+install-module find-gitrepository -force -verbose
+Install-Module find-string -Force -Verbose
+Install-Module forensics -Force -Verbose
+Install-Module forestmanagement -Force -Verbose
+Install-Module ftp -Force -Verbose
+install-module get-adcomputer -Force -Verbose
+install-module get-content -Force -Verbose
+install-module get-content -Force -Verbose -SkipPublisherCheck
+Install-Module Get-PowerShell7 -Force -Verbose
+install-module get-qadobject -Force -Verbose
+Install-Module GitAutomation -Force -Verbose
+install-module githubcmdlets -Force -Verbose
+install-module githubmoduleinstaller -Force -Verbose
+Install-Module ImportExcel -Force -Verbose
+Install-Module ImportwORD -Force -Verbose
+Install-Module InvokeBuild -Force -Verbose
+Install-Module LocalPSRepository -Force -Verbose
+Install-Module Microsoft.Online.SharePoint.PowerShell -Force -Verbose
+Install-Module Microsoft.PowerShell.ConsoleGuiTools -Force -Verbose
+install-module microsoft.powershell.graphicaltools -Force -Verbose -AllowClobber
+install-module Microsoft.PowerShell.Management -Force -Verbose
+install-module microsoft.powershell.remotingtools -Force -Verbose
+Install-Module MSAL.PS -SkipPublisherCheck -Force -Verbose
+Install-Module MSAL.PS -SkipPublisherCheck find-module *active*dir* | Install-Module -Force -Verbose
+Install-Module NetworkingDsc -Force -Verbose
+Install-Module Office365 -Force -Verbose
+Install-Module Office365.connect -Force -Verbose
+Install-Module Office365Toolkit -Force -Verbose
+Install-Module Office365Toolkit find-module *active*dir* | Install-Module -Force -Verbose
+Install-Module PackageManagement -Force -Verbose
+Install-Module pChecksAD -Force -Verbose
+Install-Module pester -Force -Verbose -SkipPublisherCheck
+Install-Module posh-dotnet -Force -Verbose
+Install-Module Posh-Git -Force -Verbose
+Install-Module powerforensics -Force -Verbose
+Install-Module PowerForensicsPortable -Force -Verbose
+Install-Module powerforensicsv2 -Force -Verbose
+Install-Module PowerGit -Force -Verbose
+install-module powershell*tools -Force -Verbose
+install-module powershellclitools -Force -Verbose
+Install-Module PowerShellGet -AllowClobber -Force
+install-module powershellmoduletools -Force -Verbose
+install-module powershellprotools -Force -Verbose -AllowClobber
+install-module powershelltools -Force -Verbose -AllowClobber
+Install-Module PSADAudit -Force -Verbose
+Install-Module psadtoolkit -Force -Verbose
+Install-Module PSCertUtils -Force -Verbose -AllowClobber
+Install-Module psdiagnostics -Force -Verbose
+Install-Module PSEventViewer -Force -Verbose
+Install-Module PSEverything -Force -Verbose
+Install-Module PSExporter,configexport,exportbase64certificate,exportcertfromrawdata -Force -Verbose
+Install-Module PSGit -Force -Verbose
+install-module psgithub -Force -Verbose
+Install-Module PSKoans -Force -Verbose
+Install-Module psneo4j -Force -Verbose
+Install-Module PSReadLine -Force -Verbose
+Install-Module PSReleaseTools -Force -Verbose
+Install-Module PSScriptTools -Force -Verbose
+Install-Module pssearch -Force -Verbose
+Install-Module PSSharedGoods -Force -Verbose
+Install-Module psstringscanner -Force -Verbose
+Install-Module pssysadmintoolkit -Force -Verbose
+Install-Module pstools -Force -Verbose
+Install-Module PSTypeExtensionTools -Force -Verbose
+Install-Module PSVMware -Force -Verbose
+Install-Module pswindowsupdate -Force -Verbose
+Install-Module PSWinReporting -Force -Verbose
+install-module pswinreportingv2 -Force -Verbose
+install-module pswmitoolkit -Force -Verbose
+Install-Module PSWriteColor -Force -Verbose
+Install-Module PSWriteExcel -Force -Verbose
+Install-Module PSWriteHTML -Force -Verbose
+install-module qadhealthcheck -Force -Verbose
+Install-Module rdp -Force -Verbose
+Install-Module samba -Force -Verbose
+Install-Module Selenium -Force -Verbose
+install-module serverconfigurationmanager -Force -Verbose
+install-module servermanager -Force -Verbose
+Install-Module sftp -Force -Verbose
+Install-Module SharePoint -Force -Verbose
+Install-Module SharePointOnlinePowerShell -Force -Verbose
+Install-Module SharePointPowerShell -Force -Verbose
+install-module showui -Force -Verbose
+Install-Module SimpleIP -Force -Verbose
+Install-Module smb -Force -Verbose
+Install-Module snmp -Force -Verbose
+Install-Module SQLSERVER -Force -Verbose
+Install-Module sqlserver -Force -Verbose
+Install-Module Testimo -Force -Verbose
+install-module Update-GitRepository -Force -Verbose
+Install-Module VMware.Vimautomation.core -Force -Verbose
+Install-Module vssetup -Force -Verbose
+install-module windowsbox -Force -Verbose
+install-module windowsbox.vmguesttools -Force -Verbose
+install-module windowsimagetools -Force -Verbose
+install-module windowstoolkit -Force -Verbose
+install-module winget -Force -Verbose
+Install-Module WordDoc, PSWriteWord, PSWordXml, PSWord, PSWordModule -Force -Verbose
+install-module xActiveDirectory -Force -Verbose
+Install-Module xCertificate -Force -Verbose
+Install-Module xPSDesiredStateConfiguration -Force -Verbose
+Install-Module xWindowsRestore -Force -Verbose
+Install-module xwineventlog -Force -Verbose
 ```
 ### Install Script <a name = "install-script"></a>
 ```powershell
@@ -384,6 +609,7 @@ Get-ADDomainController -Discover -Service PrimaryDC
 Get-ADObject -LDAPFilter "(objectclass=computer)" -searchbase "ou=domain controllers,dc=google,dc=com"
 # ADBranch
 Get-ADBranch -SearchBase "dc=<COMPANY-NAME>,dc=com" | Format-List -Property Name
+Get-ADBranch -SearchBase "dc=<COMPANY-NAME>,dc=com" | Export-Csv ad-branch-list_active-directory-details_2022-05-25.csv -NoTypeInformation -Encoding utf8
 # ADGroup
 Get-ADGroup -Filter * -Property * | Export-Csv ad-group-list_active-directory-details_2022-05-25.csv -NoTypeInformation -Encoding utf8
 Get-ADGroupReport -Verbose | Export-Csv ad-group-report_active-directory-details_2022-05-25.csv -NoTypeInformation -Encoding utf8
@@ -407,6 +633,8 @@ Get-UserProperty
 Get-UserProperty -Properties pwdlastset
 Get-ADUser -Filter * -Properties * | select -First 1 | Get-Member -MemberType *Property | select Name
 Get-ADUser -Filter * -Properties * | select name,@{expression={[datetime]::fromFileTime($_.pwdlastset)}}
+# ADObject
+Get-ADObject -Filter * -Verbose | Export-Csv .\ADObjects.csv -NoTypeInformation -Encoding utf8
 # Identify objects in the Active Directory (AD) Recycle Bin
 # Active Directory Recycle Bin (since Windows Server 2008 R2 OS, for recovering deleted objects)
 Get-ADObject -IncludeDeletedObjects -LdapFilter "(&(objectClass=user))"
@@ -479,6 +707,8 @@ Get-ChildItem -Path registry::HKEY_CURRENT_CONFIG\System\CurrentControlSet\SERVI
 ### Files
 ```powershell
 Get-ChildItem -Path C:\ -Filter *.sys -Force
+# Search for "ADComputer" text in files recursively
+Get-ChildItem -path "C:\Exclusions\github-projects" -Recurse -include "*" | Select-String -Pattern "ADComputer" | select filename, linenumber, line, path | Tee-Object -FilePath output_tee_training-folder.txt
 # Unblock files (to allow script files to be ran in PowerShell terminal)
 Get-ChildItem -Recurse | Unblock-File
 ```
@@ -502,6 +732,13 @@ Get-Command -ParameterName Cimsession
 ### Services
 ```powershell
 Get-Service -Name BITS
+```
+### GitHub - Commands
+```powershell
+Install-Module psgithub -Force -Verbose
+Import-Module psgithub -Force -Verbose
+Get-Command -Module psgithub
+Find-GitHubRepository -Query "*powersploit*" | Export-Csv .\output_find-githubrepository_powersploit_2022-05-26.csv -NoTypeInformation -Encoding utf8
 ```
 --------------------------------------------------------------------------------------------------------------------------------------------
 ### Recon
@@ -586,6 +823,7 @@ Get-NetGPOGroup                 #  gets all GPOs in a domain that set "Restricte
 Find-GPOLocation                #  takes a user/group and makes machines they have effectiverights over through GPO enumeration and correlation
 Find-GPOComputerAdmin           #  takes a computer and determines who has admin rights over itthrough GPO enumeration
 Get-DomainPolicy                #  returns the default domain or DC policy
+Get-GPOReport -All -ReportType Html -Path ".\All-GPOs.html" -Verbose
 ```
 ##### User-Hunting Functions:
 ```powershell
@@ -748,9 +986,11 @@ Get-NetFileServer
 ```powershell
 # Get All GPO's
 Get-GPO -All -Verbose | export-csv .\report_get-gpo_all_verbose.csv -Encoding utf8
+Get-GPOReport -All -ReportType Html -Path ".\All-GPOs.html" -Verbose
 ```
 - Get list of GPO in current domain
 ```powershell
+Get-GPOReport -All -ReportType Html -Path ".\All-GPOs.html" -Verbose
 Get-NetGPO
 Get-NetGPO -ComputerName DC01.enumme.local
 Get-GPO -All (GroupPolicy module)
