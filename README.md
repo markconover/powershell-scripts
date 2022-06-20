@@ -85,16 +85,54 @@ Set-ExecutionPolicy Unrestricted
 # If you have not configured TLS 1.2, any attempts to install the NuGet provider and other packages will fail
 # Reference:
 # https://docs.microsoft.com/en-us/powershell/scripting/gallery/installing-psget?view=powershell-7.2
-[Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 # Update Help
 Update-Help -Force -Verbose
 Save-Help -DestinationPath "<DESTINATION_PATH>" -Force -Verbose
 notepad++ (Get-PSReadLineOption | select -ExpandProperty HistorySavePath)
 ```
+### Windows Configurations
+```powershell
+# If you're using a virtual machine, run the following PowerShell command to enable nested virtualization:
+# Reference:
+# https://docs.microsoft.com/en-us/windows/security/threat-protection/windows-sandbox/windows-sandbox-overview#installation
+Set-VMProcessor -VMName \<VMName> -ExposeVirtualizationExtensions $true
+```
+### Install "winget"
+```powershell
+# Install winget via GitHub
+# Reference:
+# https://phoenixnap.com/kb/install-winget
+# https://docs.microsoft.com/en-us/learn/modules/explore-windows-package-manager-tool/?WT.mc_id=modinfra-0000-orthomas
+# Naviate to "winget" GitHub page --> "Releases" section
+https://github.com/microsoft/winget-cli/releases
+# Scroll down to the Assets section and click the .msixbundle file to start the download
+# Run the downloaded file and click Update
+# Wait for the installation process to finish. The app may automatically install additional dependencies required for winget to work.
+# Add "winget.exe" absolute file path ("C:\Users\<USER>\AppData\Local\Microsoft\WindowsApps") to "PATH" environment variable
+# Verify the installation by running "winget" in PowerShell or Command Prompt.
+# "winget" - Commands
+winget install --id Microsoft.PowerToys
+winget install powertoys --version 0.15.2
+winget install --id Microsoft.PowerToys --version 0.15.2
+winget upgrade --all
+winget upgrade --id Microsoft.PowerToys
+winget upgrade microsoft.powertoys -v 0.41.3
+winget export -o myfiles.json
+# Install "wingetcreate"
+# Reference:
+# https://github.com/microsoft/winget-create#readme
+# https://docs.microsoft.com/en-us/learn/modules/explore-windows-package-manager-tool/6-contribute-to-repository
+winget install wingetcreate
+```
 ### Install Chocolatey <a name = "install-chocolatey"></a>
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 choco install *git* -y --force --verbose
+
+# gcc (for Windows)
+choco install -y mingw --force --verbose
+
 choco install -y anaconda3 
 choco install -y aria2
 choco install -y bloomrpc
@@ -290,6 +328,19 @@ pip install uspp
 pip install which
 pip install xlsxwriter
 pip install zenmap
+```
+### Install Tools
+```powershell
+# Install the following helpful tools for when dealing with Active Directory:
+
+"Active Directory Replication Status Tool (ADREPLSTATUS)"
+https://www.microsoft.com/en-gb/download/details.aspx?id=30005
+Use this tool to review the replication status of an AD environment
+
+"Microsoft System Center Management Pack for ADDS"
+https://www.microsoft.com/en-us/download/details.aspx?id=54525
+The Management Pack for Windows Server Active Directory Domain Services. Monitors Windows Server 2016, 2019 and 2022 Domain Controllers and domain health.
+he Active Directory® Management Pack provides both proactive and reactive monitoring of your Active Directory deployment. It monitors the overall health of the Active Directory system and alerts you to critical performance issues. The monitoring provided by this management pack includes monitoring of the domain controllers and monitoring of health from the perspective of clients utilizing Active Directory resources. To monitor the domain controllers, the Active Directory Management Pack provides a predefined, ready-to-run set of processing rules, monitoring scripts, and reports that are designed specifically to monitor the performance and availability of the Active Directory domain controllers. The client in your environment might experience connectivity and service issues even though the domain controller appears to be operating correctly. The Active Directory Domain Member Management Pack, included in the Active Directory Management Pack, helps to identify these issues. This management pack monitors the services provided by the domain controller. It provides information in addition to that collected directly on the domain controller about whether they are available by running synthetic transactions against the directory service, such as Lightweight Directory Access Protocol (LDAP) binds and LDAP pings. In addition to health monitoring capabilities, this management pack provides a complete Active Directory monitoring solution by monitoring the health of vital processes that your Active Directory deployment depends upon, including the following: • Replication • Lightweight Directory Access Protocol (LDAP) • Domain Controller Locator • Trusts • Net Logon service • File Replication Service (FRS) • Intersite Messaging service • Windows Time service • Active Directory Web Services (ADWS) • Active Directory Management Gateway Service • Key Distribution Center (KDC) • Monitoring service availability • Collecting key performance data • Providing comprehensive reports, including reports about service availability and service health and reports that can be used for capacity planning With this management pack, information technology (IT) administrators can automate one-to-many management of users and computers, simplifying administrative tasks and reduce IT costs. Administrators can efficiently implement security settings, enforce IT policies, and minimize service outages.
 ```
 ### Install Module <a name = "install-module"></a>
 ```powershell
@@ -532,6 +583,12 @@ Install-Module xCertificate -Force -Verbose
 Install-Module xPSDesiredStateConfiguration -Force -Verbose
 Install-Module xWindowsRestore -Force -Verbose
 Install-module xwineventlog -Force -Verbose
+Install-Module xJEA -Force -Verbose
+Import-Module xJEA -Force -Verbose
+Install-Module -Name AzureAD -Force -Verbose
+Import-Module -Name AzureAD -Force -Verbose
+Install-Module AzureRM -Force -Verbose
+Import-Module AzureRM -Force -Verbose
 ```
 ### Install Script <a name = "install-script"></a>
 ```powershell
@@ -869,6 +926,9 @@ Get-ChildItem -Path registry::HKEY_CURRENT_CONFIG\System\CurrentControlSet\SERVI
 ```
 ### Files
 ```powershell
+# Get folder size (in GB)
+'{0:N2} GB' -f ((Get-ChildItem -Path ".\temp_folder" -Recurse -ErrorAction SilentlyContinue | measure Length -sum).sum / 1Gb)
+# Get all Windows system files (".sys" files)
 Get-ChildItem -Path C:\ -Filter *.sys -Force
 # Search for "ADComputer" text in files recursively
 Get-ChildItem -path "C:\Exclusions\github-projects" -Recurse -include "*" | Select-String -Pattern "ADComputer" | select filename, linenumber, line, path | Tee-Object -FilePath output_tee_training-folder.txt
