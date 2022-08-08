@@ -2,6 +2,11 @@
 # This is a customized version of Windows 10 All Hosts, All Users
 # profile settings
 
+Import-Module PSReadline
+Import-Module posh-git
+Import-Module oh-my-posh
+Import-Module ActiveDirectory
+
 # Set command prompt maximum history commands limit
 $MaximumHistoryCount = 32700
 
@@ -106,3 +111,9 @@ Set-PSReadLineOption -colors @{
 # Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope Process
 # Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope CurrentUser
 # Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope LocalMachine
+
+# Import-Module oh-my-posh
+# oh-my-posh --init --shell pwsh --config "C:\Users\mark.conover\AppData\Local\Microsoft\Windows\Fonts\Droid Sans Mono Nerd Font Complete Mono Windows Compatible.otf" | Invoke-Expression
+
+Set-PoshPrompt Paradox
+# oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\paradox.omp.json" | Invoke-Expression

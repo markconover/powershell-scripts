@@ -344,7 +344,7 @@ he Active Directory® Management Pack provides both proactive and reactive monit
 ```
 ### Install Module <a name = "install-module"></a>
 ```powershell
-Install-Module -Name PowerShellGet -Force -Verbose
+Install-Module -Name PowerShellGet -Force -Verbose -AllowClobber
 Install-Module PSReadLine -Force -Verbose
 Install-Module PSScriptTools -Force -Verbose
 Install-Module pester -SkipPublisherCheck -Force -Verbose
@@ -382,7 +382,7 @@ Find-Module -Name *session* -Repository PSGallery | Sort-Object -Property Name |
 Find-Module -Name *session* -Repository PSGallery | Sort-Object -Property Name | Format-Table -Property Name -HideTableHeaders | Install-Module -Force -Verbose| tee C:\Exclusions\temp\output_2022-04-13.txt
 Find-Module -Name CertificateDsc -Repository PSGallery | Install-Module -Force -Verbose
 Find-Module -Name Pester | Install-Module -Force -Verbose
-Find-Module -Name PowerShellGet | Install-Module -Force -Verbose
+Find-Module -Name PowerShellGet | Install-Module -Force -Verbose -AllowClobber
 find-module active*dir* | Install-Module -Force -Verbose
 Find-Module nx* | Install-Module -Force -Verbose
 Find-Module vmware.* | Install-Module -Force -Verbose
@@ -423,7 +423,7 @@ Install-Module -Name OpenSSL -Force -Verbose
 Install-Module -Name Pester -Force -Verbose
 Install-Module -Name PnP.PowerShell -Force -Verbose
 Install-Module -Name PowerShell.X509Certificate.Utility -Force -Verbose
-Install-Module -Name PowerShellGet -Force -Verbose
+Install-Module -Name PowerShellGet -Force -Verbose -AllowClobber
 Install-Module -Name PowerShellGet -RequiredVersion 1.6.5 -Force -Verbose
 Install-Module -Name PowerUpSQL -Force -Verbose -AllowClobber
 Install-Module -Name PS.ActiveDirectoryTools -Force -Verbose
@@ -520,7 +520,7 @@ Install-Module powerforensicsv2 -Force -Verbose
 Install-Module PowerGit -Force -Verbose
 install-module powershell*tools -Force -Verbose
 install-module powershellclitools -Force -Verbose
-Install-Module PowerShellGet -AllowClobber -Force
+Install-Module -Name PowerShellGet -Force -Verbose -AllowClobber
 install-module powershellmoduletools -Force -Verbose
 install-module powershellprotools -Force -Verbose -AllowClobber
 install-module powershelltools -Force -Verbose -AllowClobber
@@ -671,7 +671,7 @@ Find-Module -Tag 'Active Directory', 'ActiveDirectory', 'Active', 'Directory', '
 Get-Command -Name '*Process'
 Get-Module -ListAvailable -All -Verbose
 Get-Module -ListAvailable | where { $_.path -match "System32" }
-Install-Module -Name PowerShellGet -Force -Verbose
+Install-Module -Name PowerShellGet -Force -Verbose -AllowClobber
 Install-Module PSReadLine -Force -Verbose
 Install-Module PSScriptTools -Force -Verbose
 Install-Module pester -SkipPublisherCheck -Force -Verbose
