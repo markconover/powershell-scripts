@@ -86,6 +86,8 @@ Set-ExecutionPolicy Unrestricted
 # Reference:
 # https://docs.microsoft.com/en-us/powershell/scripting/gallery/installing-psget?view=powershell-7.2
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
+[Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
 # Update Help
 Update-Help -Force -Verbose
 Save-Help -DestinationPath "<DESTINATION_PATH>" -Force -Verbose
@@ -344,7 +346,24 @@ he Active Directory® Management Pack provides both proactive and reactive monit
 ```
 ### Install Module <a name = "install-module"></a>
 ```powershell
-Install-Module -Name PowerShellGet -Force -Verbose -AllowClobber
+[Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+Get-Module -ListAvailable PackageManagement, PowerShellGet
+Install-PackageProvider Nuget –Force
+Set-ExecutionPolicy RemoteSigned
+Install-Module –Name PowerShellGet –Force -AllowClobber
+Update-Module -Name PowerShellGet
+Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+
+References:
+https://docs.microsoft.com/en-us/powershell/scripting/gallery/installing-psget?view=powershell-7.2
+
+"How to Install and Update PowerShell 7"
+https://www.thomasmaurer.ch/2019/07/how-to-install-and-update-powershell-7/
+
+"Update PowerShellGet and PackageManagement"
+https://www.thomasmaurer.ch/2019/02/update-powershellget-and-packagemanagement/
+
+Install-Module -Name PowerShellGet -Force -Verbose
 Install-Module PSReadLine -Force -Verbose
 Install-Module PSScriptTools -Force -Verbose
 Install-Module pester -SkipPublisherCheck -Force -Verbose
@@ -721,7 +740,7 @@ Get-ADGroup -Filter { Name -like "*Management*" } | Select-Object -Property Name
 Get-ADGroup -Filter { Name -like "*admin*" } | Select-Object -Property Name | Sort-Object -Property Name -Unique
 ```
 ### Reporting
-```powershell
+```powershellf
 # Export Excel file (with PivotChard and PivotTable, 3D Chart Type)
 Get-Process | Export-Excel .\output.xlsx -WorksheetName Processes -ChartType PieExploded3D -IncludePivotChart -IncludePivotTable -Show -PivotRows Company -PivotData PM
 ```
