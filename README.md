@@ -681,6 +681,8 @@ Get-Module -ListAvailable
 # Do a Get-Module to see the ExportedCommands property to identify what commands are in a module
 # Call the ExportedCommands property so it formats nicely
 (Get-Module ActiveDirectory).ExportedCommands
+# Search for PowerShell Module containing "*Excel*" and that was published within the past year
+Find-Module *Excel* | Select-Object -Property Name, PublishedDate | Where-Object { ( $_.PublishedDate -ge ((Get-Date).AddYears(-1)) ) -and ( $_.PublishedDate -lt (Get-Date)) } | Sort-Object -Property PublishedDate -Descending
 Find-Module *install*
 Find-Module -Repository PSGallery
 Find-Module -Name *pip*
@@ -738,11 +740,25 @@ Get-ChildItem hklm:\software | Get-Member ps*
 Get-ADGroup -Filter { Name -like "*Management*" } | Select-Object -Property Name | Sort-Object -Property Name -Unique
 # Sort by "*admin*" AD Group Names
 Get-ADGroup -Filter { Name -like "*admin*" } | Select-Object -Property Name | Sort-Object -Property Name -Unique
+# Output the ten most recently created folders/files (via "CreationTime")
+gci .\ | sort CreationTime -Descending | Select -First 10 | Format-Table -Property Name, CreationTime
+# Output the ten most recently created folders/files (via "LastWriteTime")
+gci .\ | sort LastWriteTime -Descending | Select -First 10 | Format-Table -Property Name, CreationTime
+# Search files for the word "Excel"
+gci .\ -Filter *.ps1 -Recurse | Select-String "Excel" -Verbose | Tee-Object -Path .\output_tee.txt
+# Search files for "ADComputer
+gci .\ -Recurse -include "*" | Select-String -Pattern "ADComputer" | Select filename, linenumber, line, path | Tee-Object -Path .\output_tee.txt
 ```
 ### Reporting
-```powershellf
+```powershell
 # Export Excel file (with PivotChard and PivotTable, 3D Chart Type)
 Get-Process | Export-Excel .\output.xlsx -WorksheetName Processes -ChartType PieExploded3D -IncludePivotChart -IncludePivotTable -Show -PivotRows Company -PivotData PM
+```
+### CSV / Excel Files
+```powershell
+# Get the column names of a ".csv" file
+$data = Import-Csv -Path "C:\Temp\test.csv"
+$ColNames = ($data[0].psobject.Properties).name
 ```
 ### Active Directory
 ```powershell
@@ -932,6 +948,8 @@ Get-Command -ParameterName ComputerName
 Get-ChildItem hklm:\software | Get-Member ps*
 Get-Process | sort -Descending ws | select -First 3
 Get-Process | where Handles -gt 1000
+# Output process with process ID = "7884"
+Get-Process | Where-Object {$_.id -eq "7884"} 
 ```
 ### User Accounts
 ```powershell
@@ -953,6 +971,8 @@ Get-ChildItem -Path C:\ -Filter *.sys -Force
 Get-ChildItem -path "C:\Exclusions\github-projects" -Recurse -include "*" | Select-String -Pattern "ADComputer" | select filename, linenumber, line, path | Tee-Object -FilePath output_tee_training-folder.txt
 # Unblock files (to allow script files to be ran in PowerShell terminal)
 Get-ChildItem -Recurse | Unblock-File
+# Output files which are modified within the last 30 days
+gci .\ | where{$_.LastWriteTime -ge (Get-Date).AddDays(-30)}
 ```
 ### netstat
 ```powershell
