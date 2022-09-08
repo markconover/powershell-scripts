@@ -17,6 +17,7 @@
   * [PowerShell Command](#powershell-command)
   * [Sort and Filter](#sort-and-filter)
   * [Reporting](#reporting)
+  * [CSV and Excel Files](#CSV-and-Excel-Files)
   * [Active Directory](#active-directory)
   * [Computer Info](#computer-info)
   * [User Accounts](#user-accounts)
@@ -754,7 +755,7 @@ gci .\ -Recurse -include "*" | Select-String -Pattern "ADComputer" | Select file
 # Export Excel file (with PivotChard and PivotTable, 3D Chart Type)
 Get-Process | Export-Excel .\output.xlsx -WorksheetName Processes -ChartType PieExploded3D -IncludePivotChart -IncludePivotTable -Show -PivotRows Company -PivotData PM
 ```
-### CSV / Excel Files
+### CSV and Excel Files
 ```powershell
 # Get the column names of a ".csv" file
 $data = Import-Csv -Path "C:\Temp\test.csv"
